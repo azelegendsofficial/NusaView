@@ -1132,38 +1132,25 @@
             const loadingVideo = document.getElementById('loading-video');
             const content = document.getElementById('content');
             
-            // Coba putar video dengan suara
-            loadingVideo.muted = false;
-            loadingVideo.volume = 1.0;
+            // Kode untuk memunculkan suara
+            loadingVideo.muted = false; // Pastikan video tidak muted
+            loadingVideo.volume = 1.0;  // Atur volume maksimal
             
-            // Menggunakan berbagai metode untuk mencoba autoplay dengan suara
-            const playVideo = async () => {
-                try {
-                    // Metode 1: Mencoba memutar langsung
-                    await loadingVideo.play();
-                    console.log('Video berhasil diputar dengan suara');
-                } catch (e) {
-                    console.log('Gagal autoplay dengan suara, mencoba alternatif...');
-                    
-                    try {
-                        // Metode 2: Coba putar muted terlebih dahulu, kemudian unmute
-                        loadingVideo.muted = true;
-                        await loadingVideo.play();
-                        
-                        // Tunggu sebentar lalu coba unmute
-                        setTimeout(() => {
-                            loadingVideo.muted = false;
-                            console.log('Mencoba unmute setelah autoplay muted');
-                        }, 500);
-                    } catch (e2) {
-                        console.log('Autoplay gagal sama sekali:', e2);
-                        // Tetap menampilkan video meskipun tanpa suara
-                    }
+            // Coba putar video dengan suara menggunakan interaksi "fake"
+            document.body.addEventListener('mousemove', function() {
+                if (loadingVideo.paused) {
+                    loadingVideo.play().catch(e => console.log('Autoplay gagal:', e));
                 }
-            };
+            }, { once: true });
             
-            // Panggil fungsi untuk memulai video
-            playVideo();
+            document.body.addEventListener('touchstart', function() {
+                if (loadingVideo.paused) {
+                    loadingVideo.play().catch(e => console.log('Autoplay gagal:', e));
+                }
+            }, { once: true });
+            
+            // Tambahan: coba putar langsung
+            loadingVideo.play().catch(e => console.log('Autoplay awal gagal:', e));
             
             // Ketika video selesai, tampilkan halaman
             loadingVideo.addEventListener('ended', function() {
@@ -1182,19 +1169,6 @@
                 loadingScreen.style.display = 'none';
                 content.style.display = 'block';
             });
-            
-            // Fallback jika video terlalu lama dimuat
-            const timeoutDuration = 10000; // 10 detik
-            setTimeout(function() {
-                if (loadingVideo.currentTime === 0 || loadingVideo.paused) {
-                    console.log('Video tidak mulai dalam waktu yang ditentukan');
-                    loadingScreen.style.opacity = '0';
-                    setTimeout(function() {
-                        loadingScreen.style.display = 'none';
-                        content.style.display = 'block';
-                    }, 1000);
-                }
-            }, timeoutDuration);
         });
     </script>
 </body>
