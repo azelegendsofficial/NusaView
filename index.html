@@ -517,8 +517,45 @@
             }
         }
     </style>
+    <style>
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease-out;
+        }
+        
+        #loading-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .loading-text {
+            position: absolute;
+            bottom: 20px;
+            color: white;
+            font-size: 24px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
+    <div id="loading-screen">
+        <video id="loading-video" autoplay muted>
+            <!-- Ganti dengan URL video Anda -->
+            <source src="/assets/loading/playback.mp4" type="video/mp4">
+        </video>
+        <div class="loading-text">Loading...</div>
+    </div>
+    
     <header id="header">
         <a href="/" class="logo">NusaView</a>
         
@@ -1087,6 +1124,31 @@
                 const movieId = link.dataset.movie;
                 openMovieDetail(movieId);
             }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingScreen = document.getElementById('loading-screen');
+            const loadingVideo = document.getElementById('loading-video');
+            const content = document.getElementById('content');
+            
+            // Ketika video selesai, tampilkan halaman
+            loadingVideo.addEventListener('ended', function() {
+                // Animasi memudar
+                loadingScreen.style.opacity = '0';
+                
+                // Tunggu animasi memudar selesai, lalu sembunyikan loading screen
+                setTimeout(function() {
+                    loadingScreen.style.display = 'none';
+                    content.style.display = 'block';
+                }, 1000); // 1000ms = 1 detik (durasi transisi)
+            });
+            
+            // Fallback jika video gagal dimuat
+            loadingVideo.addEventListener('error', function() {
+                loadingScreen.style.display = 'none';
+                content.style.display = 'block';
+            });
         });
     </script>
 </body>
