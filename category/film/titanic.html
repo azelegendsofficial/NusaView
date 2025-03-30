@@ -750,15 +750,91 @@
             }
             
             // Show resolution change notification
-            function showResolutionNotification(resolution, quality) {
-                const notification = document.createElement('div');
-                notification.style.position = 'absolute';
-                notification.style.bottom = '80px';
-                notification.style.left = '20px';
-                notification.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-                notification.style.padding = '10px 15px';
-                notification.style.borderRadius = '4px';
-                notification.style.color = 'white';
-                notification.style.fontSize = '14px';
-                notification.style.transition = 'opacity 0.5s ease';
-                notification.innerHTML
+function showResolutionNotification(resolution, quality) {
+    const notification = document.createElement('div');
+    notification.style.position = 'absolute';
+    notification.style.bottom = '80px';
+    notification.style.left = '20px';
+    notification.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    notification.style.padding = '10px 15px';
+    notification.style.borderRadius = '4px';
+    notification.style.color = 'white';
+    notification.style.fontSize = '14px';
+    notification.style.transition = 'opacity 0.5s ease';
+    notification.innerHTML = `Kualitas video diubah ke <strong>${resolution}</strong> (${quality})`;
+    
+    videoContainer.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => {
+            notification.remove();
+        }, 500);
+    }, 3000);
+}
+
+// Handle document fullscreen changes
+document.addEventListener('fullscreenchange', updateFullscreenIcon);
+document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
+document.addEventListener('mozfullscreenchange', updateFullscreenIcon);
+document.addEventListener('MSFullscreenChange', updateFullscreenIcon);
+
+function updateFullscreenIcon() {
+    if (document.fullscreenElement || 
+        document.webkitFullscreenElement || 
+        document.mozFullScreenElement || 
+        document.msFullscreenElement) {
+        expandIcon.style.display = 'none';
+        shrinkIcon.style.display = 'block';
+        isFullscreen = true;
+    } else {
+        expandIcon.style.display = 'block';
+        shrinkIcon.style.display = 'none';
+        isFullscreen = false;
+    }
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    if (e.code === 'Space') {
+        e.preventDefault();
+        togglePlayPause();
+    } else if (e.code === 'ArrowRight') {
+        videoPlayer.currentTime += 10;
+    } else if (e.code === 'ArrowLeft') {
+        videoPlayer.currentTime -= 10;
+    } else if (e.code === 'ArrowUp') {
+        videoPlayer.volume = Math.min(1, videoPlayer.volume + 0.1);
+        updateVolumeProgress();
+        if (videoPlayer.muted) {
+            toggleMute();
+        }
+    } else if (e.code === 'ArrowDown') {
+        videoPlayer.volume = Math.max(0, videoPlayer.volume - 0.1);
+        updateVolumeProgress();
+        if (videoPlayer.volume === 0) {
+            volumeIcon.style.display = 'none';
+            muteIcon.style.display = 'block';
+        }
+    } else if (e.code === 'KeyF') {
+        toggleFullscreen();
+    } else if (e.code === 'KeyM') {
+        toggleMute();
+    }
+});
+
+// Handle video end
+videoPlayer.addEventListener('ended', function() {
+    playIcon.style.display = 'block';
+    pauseIcon.style.display = 'none';
+});
+
+// Add double-click for fullscreen
+videoPlayer.addEventListener('dblclick', toggleFullscreen);
+
+// Initialize the player
+initPlayer();
+});
+</script>
+</body>
+</html>
