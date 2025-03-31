@@ -518,7 +518,7 @@
         }
     </style>
     <style>
-        #loading-screen {
+         #loading-screen {
             position: fixed;
             top: 0;
             left: 0;
@@ -536,22 +536,21 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            position: absolute;
-            z-index: 1;
         }
         
         .loading-text {
-            position: relative;
+            position: absolute;
+            bottom: 20px;
             color: white;
             font-size: 24px;
             text-align: center;
-            z-index: 2;
         }
     </style>
 </head>
 <body>
+    <!-- Loading Screen -->
     <div id="loading-screen">
-        <video id="loading-video" autoplay playsinline loop>
+        <video id="loading-video" autoplay muted>
             <!-- Ganti dengan URL video Anda -->
             <source src="/assets/loading/playback.mp4" type="video/mp4">
         </video>
@@ -1134,16 +1133,6 @@
             const loadingVideo = document.getElementById('loading-video');
             const content = document.getElementById('content');
             
-            // Coba aktifkan suara (meskipun kemungkinan besar akan diblokir oleh browser)
-            loadingVideo.muted = false;
-            
-            // Cek apakah video sudah dimuat
-            loadingVideo.addEventListener('loadeddata', function() {
-                console.log('Video berhasil dimuat');
-                // Coba putar ulang untuk memastikan
-                loadingVideo.play();
-            });
-            
             // Ketika video selesai, tampilkan halaman
             loadingVideo.addEventListener('ended', function() {
                 // Animasi memudar
@@ -1153,30 +1142,16 @@
                 setTimeout(function() {
                     loadingScreen.style.display = 'none';
                     content.style.display = 'block';
-                }, 1000);
+                }, 1000); // 1000ms = 1 detik (durasi transisi)
             });
-            
-            // Atur timeout untuk menampilkan konten jika video tidak selesai
-            // Ubah angka 10000 (10 detik) sesuai durasi video Anda
-            setTimeout(function() {
-                loadingScreen.style.opacity = '0';
-                setTimeout(function() {
-                    loadingScreen.style.display = 'none';
-                    content.style.display = 'block';
-                }, 1000);
-            }, 10000);
             
             // Fallback jika video gagal dimuat
             loadingVideo.addEventListener('error', function() {
-                console.log('Error memuat video');
-                loadingScreen.style.opacity = '0';
-                setTimeout(function() {
-                    loadingScreen.style.display = 'none';
-                    content.style.display = 'block';
-                }, 1000);
+                loadingScreen.style.display = 'none';
+                content.style.display = 'block';
             });
-            
-            // Listener untuk klik pengguna untuk mengaktifkan suara
+
+           // Listener untuk klik pengguna untuk mengaktifkan suara
             document.addEventListener('click', function() {
                 loadingVideo.muted = false;
                 loadingVideo.play();
