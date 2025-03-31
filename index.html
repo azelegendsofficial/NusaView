@@ -1132,6 +1132,9 @@
             const loadingScreen = document.getElementById('loading-screen');
             const loadingVideo = document.getElementById('loading-video');
             const content = document.getElementById('content');
+
+            // Coba aktifkan suara (meskipun kemungkinan besar akan diblokir oleh browser)
+            loadingVideo.muted = false;
             
             // Ketika video selesai, tampilkan halaman
             loadingVideo.addEventListener('ended', function() {
