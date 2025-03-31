@@ -1129,44 +1129,28 @@
     </script>
     <script>
        document.addEventListener('DOMContentLoaded', function() {
-    const loadingScreen = document.getElementById('loading-screen');
-    const loadingVideo = document.getElementById('loading-video');
-    const content = document.getElementById('content');
-
-    // Pastikan video diputar secara otomatis dengan suara jika diizinkan oleh browser
-    loadingVideo.muted = false;
-    loadingVideo.play().then(() => {
-        console.log('Video diputar dengan suara');
-    }).catch(error => {
-        console.warn('Autoplay dengan suara gagal, mencoba dengan mute.', error);
-        loadingVideo.muted = true;
-        loadingVideo.play();
-
-        // Coba aktifkan suara setelah pemutaran
-        setTimeout(() => {
-            loadingVideo.muted = false;
-        }, 1000);
-    });
-
-    // Ketika video selesai, tampilkan halaman dan mute suara
-    loadingVideo.addEventListener('ended', function() {
-        loadingVideo.muted = true;
-        loadingScreen.style.opacity = '0';
-        
-        // Tunggu animasi memudar selesai, lalu sembunyikan loading screen
-        setTimeout(function() {
-            loadingScreen.style.display = 'none';
-            content.style.display = 'block';
-        }, 1000); // 1000ms = 1 detik (durasi transisi)
-    });
-    
-    // Fallback jika video gagal dimuat
-    loadingVideo.addEventListener('error', function() {
-        loadingScreen.style.display = 'none';
-        content.style.display = 'block';
-    });
-});
-
+            const loadingScreen = document.getElementById('loading-screen');
+            const loadingVideo = document.getElementById('loading-video');
+            const content = document.getElementById('content');
+            
+            // Ketika video selesai, tampilkan halaman
+            loadingVideo.addEventListener('ended', function() {
+                // Animasi memudar
+                loadingScreen.style.opacity = '0';
+                
+                // Tunggu animasi memudar selesai, lalu sembunyikan loading screen
+                setTimeout(function() {
+                    loadingScreen.style.display = 'none';
+                    content.style.display = 'block';
+                }, 1000); // 1000ms = 1 detik (durasi transisi)
+            });
+            
+            // Fallback jika video gagal dimuat
+            loadingVideo.addEventListener('error', function() {
+                loadingScreen.style.display = 'none';
+                content.style.display = 'block';
+            });
+        });
     </script>
 </body>
 </html>
