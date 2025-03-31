@@ -1133,9 +1133,13 @@
     const loadingVideo = document.getElementById('loading-video');
     const content = document.getElementById('content');
 
-    // Coba aktifkan suara (meskipun kemungkinan besar akan diblokir oleh browser)
+    // Pastikan video diputar secara otomatis
     loadingVideo.muted = false;
-    loadingVideo.play();
+    loadingVideo.play().catch(error => {
+        console.warn('Autoplay gagal, mencoba memulai ulang tanpa suara.', error);
+        loadingVideo.muted = true;
+        loadingVideo.play();
+    });
 
     // Ketika video selesai, tampilkan halaman dan mute suara
     loadingVideo.addEventListener('ended', function() {
@@ -1154,13 +1158,8 @@
         loadingScreen.style.display = 'none';
         content.style.display = 'block';
     });
-
-    // Listener untuk klik pengguna untuk mengaktifkan suara
-    document.addEventListener('click', function() {
-        loadingVideo.muted = false;
-        loadingVideo.play();
-    }, { once: true });
 });
+
 
     </script>
 </body>
