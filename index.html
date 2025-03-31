@@ -549,7 +549,7 @@
 </head>
 <body>
     <div id="loading-screen">
-        <video id="loading-video" autoplay muted>
+        <video id="loading-video" autoplay playsinline>
             <!-- Ganti dengan URL video Anda -->
             <source src="/assets/loading/playback.mp4" type="video/mp4">
         </video>
@@ -1132,25 +1132,9 @@
             const loadingVideo = document.getElementById('loading-video');
             const content = document.getElementById('content');
             
-            // Kode untuk memunculkan suara
-            loadingVideo.muted = false; // Pastikan video tidak muted
-            loadingVideo.volume = 1.0;  // Atur volume maksimal
-            
-            // Coba putar video dengan suara menggunakan interaksi "fake"
-            document.body.addEventListener('mousemove', function() {
-                if (loadingVideo.paused) {
-                    loadingVideo.play().catch(e => console.log('Autoplay gagal:', e));
-                }
-            }, { once: true });
-            
-            document.body.addEventListener('touchstart', function() {
-                if (loadingVideo.paused) {
-                    loadingVideo.play().catch(e => console.log('Autoplay gagal:', e));
-                }
-            }, { once: true });
-            
-            // Tambahan: coba putar langsung
-            loadingVideo.play().catch(e => console.log('Autoplay awal gagal:', e));
+            // Kode sederhana untuk mengaktifkan suara
+            loadingVideo.muted = false;
+            loadingVideo.volume = 1.0;
             
             // Ketika video selesai, tampilkan halaman
             loadingVideo.addEventListener('ended', function() {
@@ -1169,6 +1153,13 @@
                 loadingScreen.style.display = 'none';
                 content.style.display = 'block';
             });
+            
+            // Event yang berjalan saat halaman pertama kali dibuka
+            window.addEventListener('click', function() {
+                if (loadingVideo.paused) {
+                    loadingVideo.play();
+                }
+            }, { once: true });
         });
     </script>
 </body>
