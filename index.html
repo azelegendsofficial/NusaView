@@ -1133,12 +1133,19 @@
     const loadingVideo = document.getElementById('loading-video');
     const content = document.getElementById('content');
 
-    // Pastikan video diputar secara otomatis
+    // Pastikan video diputar secara otomatis dengan suara jika diizinkan oleh browser
     loadingVideo.muted = false;
-    loadingVideo.play().catch(error => {
-        console.warn('Autoplay gagal, mencoba memulai ulang tanpa suara.', error);
+    loadingVideo.play().then(() => {
+        console.log('Video diputar dengan suara');
+    }).catch(error => {
+        console.warn('Autoplay dengan suara gagal, mencoba dengan mute.', error);
         loadingVideo.muted = true;
         loadingVideo.play();
+
+        // Coba aktifkan suara setelah pemutaran
+        setTimeout(() => {
+            loadingVideo.muted = false;
+        }, 1000);
     });
 
     // Ketika video selesai, tampilkan halaman dan mute suara
@@ -1159,7 +1166,6 @@
         content.style.display = 'block';
     });
 });
-
 
     </script>
 </body>
