@@ -1262,5 +1262,25 @@
             });
         });
     </script>
+    <script>
+        document.querySelectorAll('.results-grid .premium-link').forEach(link => {
+                            link.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                const movieId = this.getAttribute('data-movie');
+                                const movie = premiumMovieData[movieId];
+                                
+                                if (movie) {
+                                    document.getElementById('premiumTitle').textContent = movie.title;
+                                    document.getElementById('premiumYear').textContent = movie.year;
+                                    document.getElementById('premiumRating').textContent = movie.rating;
+                                    document.getElementById('premiumDuration').textContent = movie.duration;
+                                    document.getElementById('premiumGenre').textContent = movie.genre;
+                                    document.getElementById('premiumDescription').textContent = movie.description;
+                                    
+                                    premiumModal.classList.add('active');
+                                }
+                            });
+                        });
+    </script>
 </body>
 </html>
