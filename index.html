@@ -849,6 +849,43 @@
                 </div>
             </div>
         </div>
+
+        <!-- Movie Detail Paid Popup -->
+    <div class="movie-detail" id="movieDetailPaid">
+        <div class="movie-detail-content">
+            <button class="movie-detail-close" id="closeMovieDetailPaid">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <div class="movie-detail-banner" id="movieBanner"></div>
+            <div class="movie-detail-info">
+                <h2 class="movie-detail-title" id="movieTitle"></h2>
+                <div class="movie-detail-meta" id="movieMeta"></div>
+                <p class="movie-detail-description" id="movieDescription"></p>
+                <div class="movie-detail-actions">
+                    <a href="#" class="btn btn-primary" id="playButton">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        Beli
+                    </a>
+                    <a href="#" class="btn btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Kamu Tidak Bisa Mendownload Film Ini!
+                    </a>
+                </div>
+                <div class="movie-detail-cast">
+                    <h3>Pemeran Utama</h3>
+                    <div class="cast-grid" id="castGrid"></div>
+                </div>
+            </div>
+        </div>
     </div>
     
     <footer>
@@ -1172,6 +1209,117 @@
                 loadingScreen.style.display = 'none';
                 content.style.display = 'block';
             });
+        });
+    </script>
+    <script>
+        const movieDetail = document.getElementById('movieDetailPaid');
+        const closeMovieDetail = document.getElementById('closeMovieDetail');
+        const movieLinks = document.querySelectorAll('.movie-link');
+        const movieBanner = document.getElementById('movieBanner');
+        const movieTitle = document.getElementById('movieTitle');
+        const movieMeta = document.getElementById('movieMeta');
+        const movieDescription = document.getElementById('movieDescription');
+        const castGrid = document.getElementById('castGrid');
+        const playButton = document.getElementById('playButton');
+
+        const movieDetailsPaid = {
+            interstellar: {
+                title: "Intestellar",
+                year: 2014,
+                duration: "169 min",
+                genres: "Fiksi Ilmiah, Petualangan, Drama, Misteri, Ketegangan",
+                rating: "8.7/10",
+                director: "Christopher Nolan",
+                image: "",
+                description: "Film Interstellar adalah film fiksi ilmiah epik yang dirilis pada tahun 2014. Film ini disutradarai oleh Christopher Nolan dan dibintangi oleh Matthew McConaughey, Anne Hathaway, Jessica Chastain, dan Michael Caine.",
+                cast: [
+                    { name: "Matthew McConaughey", character: "Cooper", photo: ""},
+                    { name: "Anne Hathaway", character: "Dr. Amelia Brand", photo: ""},
+                    { name: "Jessica Chastain", character: "Murph", photo: ""},
+                    { name: "Michael Caine", character: "Profesor John Brand", photo: ""},
+                    { name: "Mackenzie Foy", character: "Murph muda", photo: ""},
+                    { name: "Timothée Chalamet", character: "Tom Cooper muda", photo: ""},
+                    { name: "Matt Damon", character: "Dr. Man", photo: ""}
+                ]
+            },
+        };
+
+         // Add click event to all movie links
+        movieLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const movieId = this.dataset.movie;
+                openMovieDetail(movieId);
+            });
+        });
+        
+        // Function to open movie detail popup
+        function openMovieDetailPaid(movieId) {
+            // Get movie details
+            const details = movieDetailsPaid[movieId];
+            
+            if (!details) {
+                console.error('Movie details not found for:', movieId);
+                return;
+            }
+            
+            // Set movie details in the popup
+            movieBanner.style.backgroundImage = `url('${details.image}')`;
+            movieTitle.textContent = details.title;
+            movieMeta.innerHTML = `
+                <span>${details.year}</span>
+                <span>${details.duration}</span>
+                <span>${details.genres}</span>
+                <span>${details.rating}</span>
+                <span>Sutradara: ${details.director}</span>
+            `;
+            movieDescription.textContent = details.description;
+            
+            // Set cast
+            castGrid.innerHTML = '';
+            details.cast.forEach(person => {
+                const castItem = document.createElement('div');
+                castItem.className = 'cast-item';
+                castItem.innerHTML = `
+                    <div class="cast-photo">
+                        <img src="${person.photo}" alt="${person.name}">
+                    </div>
+                    <div class="cast-name">${person.name}</div>
+                    <div class="cast-character">${person.character}</div>
+                `;
+                castGrid.appendChild(castItem);
+            });
+            
+            // Update play button
+            playButton.href = `/category/film/${movieId}.html`;
+            
+            // Show the popup
+            movieDetailPaid.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Close movie detail popup
+        closeMovieDetailPaid.addEventListener('click', function() {
+            movieDetailPaid.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+        
+        // Close popup when clicking outside of content
+        movieDetailPaid.addEventListener('click', function(e) {
+            if (e.target === movieDetailPaid) {
+                movieDetailPaid.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+        
+        // Event delegation for dynamic movie links
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.movie-link')) {
+                const link = e.target.closest('.movie-link');
+                e.preventDefault();
+                const movieId = link.dataset.movie;
+                openMovieDetailPaid(movieId);
+            }
         });
     </script>
 </body>
