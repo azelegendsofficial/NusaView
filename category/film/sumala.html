@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NusaView - Sumala Horror Film</title>
+    <style>
+        :root {
+            --primary-color: #e50914;
+            --dark-bg: #141414;
+            --secondary-bg: #181818;
+            --text-color: #ffffff;
+            --secondary-text: #b3b3b3;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background-color: black;
+            overflow: hidden;
+        }
+        
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .controls-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 30px 20px 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .video-container:hover .controls-container,
+        .controls-container.active {
+            opacity: 1;
+        }
+        
+        .video-controls {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .play-pause, .volume-btn, .fullscreen-btn {
+            background: none;
+            border: none;
+            color: white;
+            margin-right: 15px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .play-pause:hover, .volume-btn:hover, .fullscreen-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .progress-container {
+            flex: 1;
+            height: 5px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            margin: 0 15px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 5px;
+            width: 0;
+        }
+        
+        .buffer-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.4);
+            border-radius: 5px;
+            width: 0;
+        }
+        
+        .time-display {
+            color: white;
+            font-size: 14px;
+            margin-left: 15px;
+        }
+        
+        .settings-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        
+        .settings-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            margin-left: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .settings-dropdown {
+            position: absolute;
+            bottom: 70px;
+            right: 20px;
+            background-color: rgba(28, 28, 28, 0.9);
+            border-radius: 5px;
+            width: 200px;
+            padding: 15px;
+            display: none;
+        }
+        
+        .settings-dropdown.active {
+            display: block;
+        }
+        
+        .settings-dropdown h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: var(--secondary-text);
+        }
+        
+        .resolution-options {
+            list-style: none;
+        }
+        
+        .resolution-options li {
+            padding: 8px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .resolution-options li:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .resolution-options li.active {
+            color: var(--primary-color);
+        }
+        
+        .resolution-check {
+            display: none;
+        }
+        
+        .resolution-options li.active .resolution-check {
+            display: inline;
+        }
+        
+        .video-info {
+            position: absolute;
+            top: 20px;
+            left: 70px;
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 15px;
+            border-radius: 5px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .video-container:hover .video-info {
+            opacity: 1;
+        }
+        
+        .video-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        
+        .resolution-badge {
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 12px;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+        
+        .loading-indicator.active {
+            display: block;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .volume-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .volume-slider {
+            width: 0;
+            height: 5px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            overflow: hidden;
+            transition: width 0.3s ease;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        
+        .volume-container:hover .volume-slider {
+            width: 80px;
+        }
+        
+        .volume-progress {
+            height: 100%;
+            background-color: white;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" id="backButton">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+    </button>
+    
+    <div class="video-container" id="videoContainer">
+        <video id="videoPlayer" poster="data:image/jpeg;base64,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"></video>
+        
+        <div class="video-info">
+            <div class="video-title">Sumala Horror</div>
+            <div class="resolution-badge" id="currentResolution">480p</div>
+        </div>
+        
+        <div class="loading-indicator" id="loadingIndicator">
+            <div class="spinner"></div>
+        </div>
+        
+        <div class="controls-container" id="controlsContainer">
+            <div class="video-controls">
+                <button class="play-pause" id="playPauseBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" id="playIcon">
+                        <polygon points="5 3 19 12 5 21"></polygon>
+                    </svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" id="pauseIcon" style="display: none;">
+                        <rect x="6" y="4" width="4" height="16"></rect>
+                        <rect x="14" y="4" width="4" height="16"></rect>
+                    </svg>
+                </button>
+                
+                <div class="volume-container">
+                    <button class="volume-btn" id="volumeBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="volumeIcon">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19"></polygon>
+                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                        </svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="muteIcon" style="display: none;">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19"></polygon>
+                            <line x1="23" y1="9" x2="17" y2="15"></line>
+                            <line x1="17" y1="9" x2="23" y2="15"></line>
+                        </svg>
+                    </button>
+                    <div class="volume-slider" id="volumeSlider">
+                        <div class="volume-progress" id="volumeProgress"></div>
+                    </div>
+                </div>
+                
+                <div class="progress-container" id="progressContainer">
+                    <div class="buffer-bar" id="bufferBar"></div>
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <div class="time-display">
+                    <span id="currentTime">0:00</span> / <span id="duration">3:15:03</span>
+                </div>
+                
+                <button class="fullscreen-btn" id="fullscreenBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="expandIcon">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                    </svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="shrinkIcon" style="display: none;">
+                        <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="settings-container">
+                <button class="settings-btn" id="settingsBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                </button>
+                
+                <div class="settings-dropdown" id="settingsDropdown">
+                    <h3>Kualitas Video</h3>
+                    <ul class="resolution-options" id="resolutionOptions">
+                        <li data-resolution="480p" class="active">
+                            480p
+                            <svg class="resolution-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </li>
+                        <li data-resolution="720p">
+                            720p
+                            <svg class="resolution-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </li>
+                        <li data-resolution="1080p">
+                            1080p
+                            <svg class="resolution-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </li>
+                        <li data-resolution="4K">
+                            4K
+                            <svg class="resolution-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </li>
+                        <li data-resolution="4K HDR">
+                            4K + HDR
+                            <svg class="resolution-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </li>
+                        <li data-resolution="8K">
+                            8K
+                            <svg class="resolution-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </li>
+                        <li data-resolution="8K HDR">
+                            8K + HDR
+                            <svg class="resolution-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </li>
+                        <li data-resolution="8K SUPER HDR">
+                            8K + SUPER HDR
+                            <svg class="resolution-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Video sources for different resolutions
+            const videoSources = {
+                "480p": {
+                    blur: 20,
+                    filter: 'brightness(0.8) contrast(0.8)',
+                    quality: 'rendah'
+                },
+                "720p": {
+                    blur: 10,
+                    filter: 'brightness(0.9) contrast(0.9)',
+                    quality: 'sedang'
+                },
+                "1080p": {
+                    blur: 0,
+                    filter: 'brightness(1) contrast(1)',
+                    quality: 'tinggi'
+                },
+                "4K": {
+                    blur: 0,
+                    filter: 'brightness(1.1) contrast(1.1) saturate(1.1)',
+                    quality: 'sangat tinggi'
+                },
+                "4K HDR": {
+                    blur: 0,
+                    filter: 'brightness(1.2) contrast(1.2) saturate(1.2)',
+                    quality: 'maksimal'
+                },
+                "8K": {
+                    blur: 0,
+                    filter: 'brightness(1.1) contrast(1.15) saturate(1.15)',
+                    quality: 'ultra-high'
+                },
+                "8K + HDR": {
+                    blur: 0,
+                    filter: 'brightness(1.25) contrast(1.25) saturate(1.3)',
+                    quality: 'extreme'
+                },
+                "8K + SUPER HDR": {
+                    blur: 0,
+                    filter: 'brightness(1.35) contrast(1.4) saturate(1.45)',
+                    quality: 'maximum'
+                }
+            };
+            
+            // Elements
+            const videoPlayer = document.getElementById('videoPlayer');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const playIcon = document.getElementById('playIcon');
+            const pauseIcon = document.getElementById('pauseIcon');
+            const volumeBtn = document.getElementById('volumeBtn');
+            const volumeIcon = document.getElementById('volumeIcon');
+            const muteIcon = document.getElementById('muteIcon');
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            const expandIcon = document.getElementById('expandIcon');
+            const shrinkIcon = document.getElementById('shrinkIcon');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const bufferBar = document.getElementById('bufferBar');
+            const currentTime = document.getElementById('currentTime');
+            const duration = document.getElementById('duration');
+            const settingsBtn = document.getElementById('settingsBtn');
+            const settingsDropdown = document.getElementById('settingsDropdown');
+            const resolutionOptions = document.getElementById('resolutionOptions');
+            const currentResolution = document.getElementById('currentResolution');
+            const volumeSlider = document.getElementById('volumeSlider');
+            const volumeProgress = document.getElementById('volumeProgress');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const controlsContainer = document.getElementById('controlsContainer');
+            const videoContainer = document.getElementById('videoContainer');
+            const backButton = document.getElementById('backButton');
+            
+            // Set initial video source (placeholder video for simulation)
+            videoPlayer.src = "https://youtu.be/04VFig17Naw?si=wathpPPsYmXBtdmK"; // This is just a placeholder
+            
+            // Variables for tracking
+            let controlsTimeout;
+            let isFullscreen = false;
+            let isMuted = false;
+            let isChangingResolution = false;
+            
+            // Initialize the video player
+            function initPlayer() {
+                // Set initial resolution to 480p
+                setResolution('480p');
+                
+                // Set initial volume
+                videoPlayer.volume = 1;
+                updateVolumeProgress();
+                
+                // Add event listeners
+                playPauseBtn.addEventListener('click', togglePlayPause);
+                videoPlayer.addEventListener('click', togglePlayPause);
+                volumeBtn.addEventListener('click', toggleMute);
+                fullscreenBtn.addEventListener('click', toggleFullscreen);
+                settingsBtn.addEventListener('click', toggleSettings);
+                
+                videoPlayer.addEventListener('timeupdate', updateProgress);
+                videoPlayer.addEventListener('progress', updateBuffer);
+                videoPlayer.addEventListener('loadedmetadata', updateDuration);
+                videoPlayer.addEventListener('waiting', showLoading);
+                videoPlayer.addEventListener('playing', hideLoading);
+                videoPlayer.addEventListener('play', updatePlayPauseIcon);
+                videoPlayer.addEventListener('pause', updatePlayPauseIcon);
+                
+                progressContainer.addEventListener('click', seek);
+                volumeSlider.addEventListener('click', changeVolume);
+                
+                // Handle resolution changes
+                resolutionOptions.querySelectorAll('li').forEach(option => {
+                    option.addEventListener('click', function() {
+                        const newResolution = this.getAttribute('data-resolution');
+                        setResolution(newResolution);
+                    });
+                });
+                
+                // Hide controls when inactive
+                videoContainer.addEventListener('mousemove', showControls);
+                
+                // Back button
+                backButton.addEventListener('click', function() {
+                    // In a real application, this would navigate back to the main page
+                    alert('Kembali ke halaman utama');
+                });
+                
+                // Simulate video loading initially
+                showLoading();
+                setTimeout(hideLoading, 2000);
+            }
+            
+            // Play/Pause toggle
+            function togglePlayPause() {
+                if (videoPlayer.paused) {
+                    videoPlayer.play();
+                } else {
+                    videoPlayer.pause();
+                }
+            }
+            
+            // Update play/pause icon
+            function updatePlayPauseIcon() {
+                if (videoPlayer.paused) {
+                    playIcon.style.display = 'block';
+                    pauseIcon.style.display = 'none';
+                } else {
+                    playIcon.style.display = 'none';
+                    pauseIcon.style.display = 'block';
+                }
+            }
+            
+            // Toggle mute
+            function toggleMute() {
+                isMuted = !isMuted;
+                videoPlayer.muted = isMuted;
+                
+                if (isMuted) {
+                    volumeIcon.style.display = 'none';
+                    muteIcon.style.display = 'block';
+                    volumeProgress.style.width = '0%';
+                } else {
+                    volumeIcon.style.display = 'block';
+                    muteIcon.style.display = 'none';
+                    updateVolumeProgress();
+                }
+            }
+            
+            // Update volume progress bar
+            function updateVolumeProgress() {
+                volumeProgress.style.width = (videoPlayer.volume * 100) + '%';
+            }
+            
+            // Change volume
+            function changeVolume(e) {
+                const rect = volumeSlider.getBoundingClientRect();
+                const position = (e.clientX - rect.left) / rect.width;
+                videoPlayer.volume = Math.max(0, Math.min(1, position));
+                
+                if (videoPlayer.volume === 0) {
+                    volumeIcon.style.display = 'none';
+                    muteIcon.style.display = 'block';
+                    isMuted = true;
+                    videoPlayer.muted = true;
+                } else {
+                    volumeIcon.style.display = 'block';
+                    muteIcon.style.display = 'none';
+                    isMuted = false;
+                    videoPlayer.muted = false;
+                }
+                
+                updateVolumeProgress();
+            }
+            
+            // Toggle fullscreen
+            function toggleFullscreen() {
+                if (!isFullscreen) {
+                    if (videoContainer.requestFullscreen) {
+                        videoContainer.requestFullscreen();
+                    } else if (videoContainer.webkitRequestFullscreen) {
+                        videoContainer.webkitRequestFullscreen();
+                    } else if (videoContainer.msRequestFullscreen) {
+                        videoContainer.msRequestFullscreen();
+                    }
+                    
+                    expandIcon.style.display = 'none';
+                    shrinkIcon.style.display = 'block';
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    } else if (document.msExitFullscreen) {
+                        document.msExitFullscreen();
+                    }
+                    
+                    expandIcon.style.display = 'block';
+                    shrinkIcon.style.display = 'none';
+                }
+                
+                isFullscreen = !isFullscreen;
+            }
+            
+            // Update progress bar
+            function updateProgress() {
+                const progress = (videoPlayer.currentTime / videoPlayer.duration) * 100;
+                progressBar.style.width = progress + '%';
+                
+                // Update current time display
+                currentTime.textContent = formatTime(videoPlayer.currentTime);
+            }
+            
+            // Update buffer bar
+            function updateBuffer() {
+                if (videoPlayer.buffered.length > 0) {
+                    const bufferedEnd = videoPlayer.buffered.end(videoPlayer.buffered.length - 1);
+                    const duration = videoPlayer.duration;
+                    
+                    if (duration > 0) {
+                        const bufferedPercent = (bufferedEnd / duration) * 100;
+                        bufferBar.style.width = bufferedPercent + '%';
+                    }
+                }
+            }
+            
+            // Update duration display
+            function updateDuration() {
+                duration.textContent = formatTime(videoPlayer.duration);
+            }
+            
+            // Format time to MM:SS
+            function formatTime(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                seconds = Math.floor(seconds % 60);
+                return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+            }
+            
+            // Seek in video
+            function seek(e) {
+                const rect = progressContainer.getBoundingClientRect();
+                const position = (e.clientX - rect.left) / rect.width;
+                videoPlayer.currentTime = position * videoPlayer.duration;
+            }
+            
+            // Toggle settings dropdown
+            function toggleSettings(e) {
+                e.stopPropagation();
+                settingsDropdown.classList.toggle('active');
+                
+                // Hide settings when clicking outside
+                if (settingsDropdown.classList.contains('active')) {
+                    setTimeout(() => {
+                        document.addEventListener('click', closeSettings);
+                    }, 10);
+                } else {
+                    document.removeEventListener('click', closeSettings);
+                }
+            }
+            
+            // Close settings dropdown
+            function closeSettings(e) {
+                if (!settingsDropdown.contains(e.target) && e.target !== settingsBtn) {
+                    settingsDropdown.classList.remove('active');
+                    document.removeEventListener('click', closeSettings);
+                }
+            }
+            
+            // Set resolution
+            function setResolution(resolution) {
+                if (isChangingResolution) return;
+                
+                isChangingResolution = true;
+                const currentTime = videoPlayer.currentTime;
+                const isPaused = videoPlayer.paused;
+                
+                // Update active resolution in menu
+                resolutionOptions.querySelectorAll('li').forEach(option => {
+                    if (option.getAttribute('data-resolution') === resolution) {
+                        option.classList.add('active');
+                    } else {
+                        option.classList.remove('active');
+                    }
+                });
+                
+                // Update resolution badge
+                currentResolution.textContent = resolution;
+                
+                // Show loading
+                showLoading();
+                
+                // Simulate changing resolution
+                // In a real implementation, you would change the video source here
+                setTimeout(() => {
+                    // Apply visual changes to simulate different resolutions
+                    const resSettings = videoSources[resolution];
+                    
+                    // Adjust video appearance to simulate different resolutions
+                    videoPlayer.style.filter = resSettings.filter;
+                    
+                    // If blur is needed for lower resolutions
+                    if (resSettings.blur > 0) {
+                        videoPlayer.style.filter += ` blur(${resSettings.blur}px)`;
+                    }
+                    
+                    // Resume playback from the same position
+                    videoPlayer.currentTime = currentTime;
+                    
+                    if (!isPaused) {
+                        videoPlayer.play();
+                    }
+                    
+                    // Hide loading and settings
+                    hideLoading();
+                    settingsDropdown.classList.remove('active');
+                    isChangingResolution = false;
+                    
+                    // Show temporary notification
+                    showResolutionNotification(resolution, resSettings.quality);
+                }, 2000);
+            }
+            
+            // Show loading indicator
+            function showLoading() {
+                loadingIndicator.classList.add('active');
+            }
+            
+            // Hide loading indicator
+            function hideLoading() {
+                loadingIndicator.classList.remove('active');
+            }
+            
+            // Show controls on mouse movement
+            function showControls() {
+                controlsContainer.classList.add('active');
+                
+                clearTimeout(controlsTimeout);
+                controlsTimeout = setTimeout(() => {
+                    if (!videoPlayer.paused && !settingsDropdown.classList.contains('active')) {
+                        controlsContainer.classList.remove('active');
+                    }
+                }, 3000);
+            }
+            
+            // Show resolution change notification
+function showResolutionNotification(resolution, quality) {
+    const notification = document.createElement('div');
+    notification.style.position = 'absolute';
+    notification.style.bottom = '80px';
+    notification.style.left = '20px';
+    notification.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    notification.style.padding = '10px 15px';
+    notification.style.borderRadius = '4px';
+    notification.style.color = 'white';
+    notification.style.fontSize = '14px';
+    notification.style.transition = 'opacity 0.5s ease';
+    notification.innerHTML = `Kualitas video diubah ke <strong>${resolution}</strong> (${quality})`;
+    
+    videoContainer.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => {
+            notification.remove();
+        }, 500);
+    }, 3000);
+}
+
+// Handle document fullscreen changes
+document.addEventListener('fullscreenchange', updateFullscreenIcon);
+document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
+document.addEventListener('mozfullscreenchange', updateFullscreenIcon);
+document.addEventListener('MSFullscreenChange', updateFullscreenIcon);
+
+function updateFullscreenIcon() {
+    if (document.fullscreenElement || 
+        document.webkitFullscreenElement || 
+        document.mozFullScreenElement || 
+        document.msFullscreenElement) {
+        expandIcon.style.display = 'none';
+        shrinkIcon.style.display = 'block';
+        isFullscreen = true;
+    } else {
+        expandIcon.style.display = 'block';
+        shrinkIcon.style.display = 'none';
+        isFullscreen = false;
+    }
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    if (e.code === 'Space') {
+        e.preventDefault();
+        togglePlayPause();
+    } else if (e.code === 'ArrowRight') {
+        videoPlayer.currentTime += 10;
+    } else if (e.code === 'ArrowLeft') {
+        videoPlayer.currentTime -= 10;
+    } else if (e.code === 'ArrowUp') {
+        videoPlayer.volume = Math.min(1, videoPlayer.volume + 0.1);
+        updateVolumeProgress();
+        if (videoPlayer.muted) {
+            toggleMute();
+        }
+    } else if (e.code === 'ArrowDown') {
+        videoPlayer.volume = Math.max(0, videoPlayer.volume - 0.1);
+        updateVolumeProgress();
+        if (videoPlayer.volume === 0) {
+            volumeIcon.style.display = 'none';
+            muteIcon.style.display = 'block';
+        }
+    } else if (e.code === 'KeyF') {
+        toggleFullscreen();
+    } else if (e.code === 'KeyM') {
+        toggleMute();
+    }
+});
+
+// Handle video end
+videoPlayer.addEventListener('ended', function() {
+    playIcon.style.display = 'block';
+    pauseIcon.style.display = 'none';
+});
+
+// Add double-click for fullscreen
+videoPlayer.addEventListener('dblclick', toggleFullscreen);
+
+// Initialize the player
+initPlayer();
+});
+</script>
+</body>
+</html>
