@@ -549,7 +549,7 @@
 </head>
 <body>
     <div id="loading-screen">
-        <video id="loading-video" autoplay playsinline>
+        <video id="loading-video" autoplay playsinline loop>
             <!-- Ganti dengan URL video Anda -->
             <source src="/assets/loading/playback.mp4" type="video/mp4">
         </video>
@@ -1127,14 +1127,20 @@
         });
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+       document.addEventListener('DOMContentLoaded', function() {
             const loadingScreen = document.getElementById('loading-screen');
             const loadingVideo = document.getElementById('loading-video');
             const content = document.getElementById('content');
             
-            // Kode sederhana untuk mengaktifkan suara
+            // Coba aktifkan suara (meskipun kemungkinan besar akan diblokir oleh browser)
             loadingVideo.muted = false;
-            loadingVideo.volume = 1.0;
+            
+            // Cek apakah video sudah dimuat
+            loadingVideo.addEventListener('loadeddata', function() {
+                console.log('Video berhasil dimuat');
+                // Coba putar ulang untuk memastikan
+                loadingVideo.play();
+            });
             
             // Ketika video selesai, tampilkan halaman
             loadingVideo.addEventListener('ended', function() {
@@ -1145,20 +1151,33 @@
                 setTimeout(function() {
                     loadingScreen.style.display = 'none';
                     content.style.display = 'block';
-                }, 1000); // 1000ms = 1 detik (durasi transisi)
+                }, 1000);
             });
+            
+            // Atur timeout untuk menampilkan konten jika video tidak selesai
+            // Ubah angka 10000 (10 detik) sesuai durasi video Anda
+            setTimeout(function() {
+                loadingScreen.style.opacity = '0';
+                setTimeout(function() {
+                    loadingScreen.style.display = 'none';
+                    content.style.display = 'block';
+                }, 1000);
+            }, 10000);
             
             // Fallback jika video gagal dimuat
             loadingVideo.addEventListener('error', function() {
-                loadingScreen.style.display = 'none';
-                content.style.display = 'block';
+                console.log('Error memuat video');
+                loadingScreen.style.opacity = '0';
+                setTimeout(function() {
+                    loadingScreen.style.display = 'none';
+                    content.style.display = 'block';
+                }, 1000);
             });
             
-            // Event yang berjalan saat halaman pertama kali dibuka
-            window.addEventListener('click', function() {
-                if (loadingVideo.paused) {
-                    loadingVideo.play();
-                }
+            // Listener untuk klik pengguna untuk mengaktifkan suara
+            document.addEventListener('click', function() {
+                loadingVideo.muted = false;
+                loadingVideo.play();
             }, { once: true });
         });
     </script>
