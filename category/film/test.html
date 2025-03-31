@@ -2,14 +2,18 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Unggah Video</title>
+    <title>Konversi Video ke URL</title>
 </head>
 <body>
     <h2>Unggah Video Anda</h2>
-    <form action="upload.php" method="post" enctype="multipart/form-data">
-        Pilih video untuk diunggah:
-        <input type="file" name="fileToUpload" id="fileToUpload" accept="video/*">
-        <input type="submit" value="Unggah Video" name="submit">
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="videoInput" name="video" accept="video/*" required>
+        <button type="submit">Unggah</button>
     </form>
+    <div id="linkContainer" style="display:none;">
+        <p>Video Anda telah diunggah. Akses melalui tautan berikut:</p>
+        <a id="videoLink" href="#" target="_blank"></a>
+    </div>
+    <script src="upload.js"></script>
 </body>
 </html>
