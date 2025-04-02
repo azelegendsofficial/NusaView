@@ -2,18 +2,675 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Konversi Video ke URL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noton Video Player</title>
+    <style>
+        :root {
+            --primary-color: #e50914;
+            --dark-bg: #141414;
+            --secondary-bg: #181818;
+            --text-color: #ffffff;
+            --secondary-text: #b3b3b3;
+            --video-controls-bg: rgba(0, 0, 0, 0.7);
+            --progress-color: #e50914;
+            --hover-bg: rgba(255, 255, 255, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+        }
+        
+        /* Header */
+        header {
+            padding: 15px 4%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--dark-bg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            text-decoration: none;
+        }
+        
+        /* Video Container */
+        .video-container {
+            position: relative;
+            width: 100%;
+            background-color: #000;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .video-container.theater-mode {
+            max-height: calc(100vh - 120px);
+        }
+        
+        .video-player {
+            width: 100%;
+            height: 100%;
+            max-height: calc(100vh - 120px);
+            background-color: #000;
+            display: block;
+        }
+        
+        /* Video Controls */
+        .video-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, var(--video-controls-bg), transparent);
+            padding: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .video-container:hover .video-controls,
+        .video-controls.active {
+            opacity: 1;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 3px;
+            background-color: rgba(255, 255, 255, 0.3);
+            margin-bottom: 10px;
+            cursor: pointer;
+            position: relative;
+            border-radius: 3px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--progress-color);
+            border-radius: 3px;
+            position: relative;
+        }
+        
+        .progress-hover {
+            position: absolute;
+            top: -3px;
+            left: 0;
+            right: 0;
+            height: 10px;
+        }
+        
+        .progress-container:hover {
+            height: 5px;
+        }
+        
+        .progress-bar-handle {
+            position: absolute;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--progress-color);
+            display: none;
+        }
+        
+        .progress-container:hover .progress-bar-handle {
+            display: block;
+        }
+        
+        .time-display {
+            color: var(--text-color);
+            font-size: 0.8rem;
+            min-width: 100px;
+            text-align: center;
+            margin-right: 15px;
+        }
+        
+        .controls-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .left-controls, .right-controls {
+            display: flex;
+            align-items: center;
+        }
+        
+        .control-button {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 50%;
+            margin: 0 2px;
+        }
+        
+        .control-button:hover {
+            background-color: var(--hover-bg);
+        }
+        
+        .control-button svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        /* Volume Control */
+        .volume-container {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        
+        .volume-slider {
+            width: 0;
+            height: 3px;
+            background-color: rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+            transition: width 0.3s ease;
+            position: relative;
+            border-radius: 3px;
+            margin-left: 5px;
+        }
+        
+        .volume-container:hover .volume-slider {
+            width: 80px;
+        }
+        
+        .volume-level {
+            height: 100%;
+            width: 100%;
+            background-color: var(--text-color);
+            border-radius: 3px;
+        }
+        
+        /* Settings Menu */
+        .settings-menu {
+            position: absolute;
+            bottom: 60px;
+            right: 10px;
+            background-color: rgba(28, 28, 28, 0.9);
+            border-radius: 4px;
+            width: 200px;
+            padding: 10px 0;
+            display: none;
+            z-index: 20;
+        }
+        
+        .settings-menu.active {
+            display: block;
+        }
+        
+        .menu-item {
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .menu-item:hover {
+            background-color: var(--hover-bg);
+        }
+        
+        .menu-label {
+            color: var(--text-color);
+        }
+        
+        .menu-value {
+            color: var(--secondary-text);
+        }
+        
+        /* Video Info */
+        .video-info {
+            padding: 20px 4%;
+        }
+        
+        .video-title {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .video-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        
+        .view-count {
+            font-size: 0.9rem;
+            color: var(--secondary-text);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .action-button {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-color);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .action-button svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .creator-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .creator-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #555;
+            margin-right: 15px;
+            overflow: hidden;
+        }
+        
+        .creator-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .creator-details {
+            flex: 1;
+        }
+        
+        .creator-name {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        
+        .subscriber-count {
+            font-size: 0.8rem;
+            color: var(--secondary-text);
+        }
+        
+        .subscribe-button {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            border: none;
+            padding: 10px 16px;
+            border-radius: 2px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .video-description {
+            color: var(--secondary-text);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-top: 15px;
+        }
+        
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .action-buttons {
+                flex-wrap: wrap;
+            }
+            
+            .time-display {
+                min-width: 80px;
+                font-size: 0.75rem;
+            }
+            
+            .control-button {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .control-button svg {
+                width: 20px;
+                height: 20px;
+            }
+            
+            .creator-info {
+                flex-wrap: wrap;
+            }
+            
+            .creator-details {
+                margin-bottom: 10px;
+                width: 100%;
+            }
+            
+            .subscribe-button {
+                margin-left: 65px;
+            }
+            
+            .volume-container:hover .volume-slider {
+                width: 50px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .control-button {
+                width: 32px;
+                height: 32px;
+                margin: 0 1px;
+            }
+            
+            .control-button svg {
+                width: 18px;
+                height: 18px;
+            }
+            
+            .right-controls .control-button:not(.settings-button):not(.fullscreen-button) {
+                display: none;
+            }
+            
+            .video-title {
+                font-size: 1.1rem;
+            }
+            
+            .creator-avatar {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .subscribe-button {
+                padding: 8px 12px;
+                margin-left: 55px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h2>Unggah Video Anda</h2>
-    <form id="uploadForm" enctype="multipart/form-data">
-        <input type="file" id="videoInput" name="video" accept="video/*" required>
-        <button type="submit">Unggah</button>
-    </form>
-    <div id="linkContainer" style="display:none;">
-        <p>Video Anda telah diunggah. Akses melalui tautan berikut:</p>
-        <a id="videoLink" href="#" target="_blank"></a>
+    <header>
+        <a href="#" class="logo">NOTON</a>
+    </header>
+    
+    <div class="video-container" id="videoContainer">
+        <video class="video-player" id="videoPlayer" poster="/api/placeholder/1280/720">
+            <source src="#" type="video/mp4">
+            Browser Anda tidak mendukung tag video.
+        </video>
+        
+        <div class="video-controls" id="videoControls">
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-hover"></div>
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-bar-handle"></div>
+                </div>
+            </div>
+            
+            <div class="controls-row">
+                <div class="left-controls">
+                    <button class="control-button play-pause-button" id="playPauseButton">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path class="play-icon" d="M8 5v14l11-7z"></path>
+                            <path class="pause-icon" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" style="display: none;"></path>
+                        </svg>
+                    </button>
+                    
+                    <button class="control-button next-button">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"></path>
+                        </svg>
+                    </button>
+                    
+                    <div class="volume-container">
+                        <button class="control-button volume-button" id="volumeButton">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path class="volume-high" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path>
+                                <path class="volume-low" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" style="display: none;"></path>
+                                <path class="volume-mute" d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" style="display: none;"></path>
+                            </svg>
+                        </button>
+                        <div class="volume-slider" id="volumeSlider">
+                            <div class="volume-level" id="volumeLevel"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="time-display" id="timeDisplay">0:00 / 10:30</div>
+                </div>
+                
+                <div class="right-controls">
+                    <button class="control-button cc-button">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM4 12h4v2H4v-2zm10 6H4v-2h10v2zm6 0h-4v-2h4v2zm0-4H10v-2h10v2z"></path>
+                        </svg>
+                    </button>
+                    
+                    <button class="control-button settings-button" id="settingsButton">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"></path>
+                        </svg>
+                    </button>
+                    
+                    <button class="control-button theater-button" id="theaterButton">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 6H5c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H5V8h14v8z"></path>
+                        </svg>
+                    </button>
+                    
+                    <button class="control-button fullscreen-button" id="fullscreenButton">
+                        <svg viewBox="0 0 24 24" fill="currentColor" class="fullscreen-icon">
+                            <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"></path>
+                        </svg>
+                        <svg viewBox="0 0 24 24" fill="currentColor" class="fullscreen-exit-icon" style="display: none;">
+                            <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Settings Menu -->
+        <div class="settings-menu" id="settingsMenu">
+            <div class="menu-item" id="playbackSpeedOption">
+                <span class="menu-label">Kecepatan pemutaran</span>
+                <span class="menu-value">Normal</span>
+            </div>
+            <div class="menu-item" id="qualityOption">
+                <span class="menu-label">Kualitas</span>
+                <span class="menu-value">1080p</span>
+            </div>
+            <div class="menu-item">
+                <span class="menu-label">Teks</span>
+                <span class="menu-value">Mati</span>
+            </div>
+            <div class="menu-item">
+                <span class="menu-label">Autoplay</span>
+                <span class="menu-value">Hidup</span>
+            </div>
+        </div>
     </div>
-    <script src="upload.js"></script>
-</body>
-</html>
+    
+    <div class="video-info">
+        <h1 class="video-title">Tenet - Trailer Resmi</h1>
+        
+        <div class="video-meta">
+            <div class="view-count">12,459,872 kali ditonton • 2 Apr 2025</div>
+            
+            <div class="action-buttons">
+                <button class="action-button">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-1.91l-.01-.01L23 10z"></path>
+                    </svg>
+                    128K
+                </button>
+                <button class="action-button">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v1.91l.01.01L1 14c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"></path>
+                    </svg>
+                    2.5K
+                </button>
+                <button class="action-button">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M15 5.63L20.66 12 15 18.37V14h-1c-3.96 0-7.14 1-9.75 3.09 1.84-4.07 5.11-6.4 9.89-7.1l.86-.13V5.63M14 3v6C6.22 10.13 3.11 15.33 2 21c2.78-3.97 6.44-6 12-6v6l8-9-8-9z"></path>
+                    </svg>
+                    Bagikan
+                </button>
+                <button class="action-button">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M22 13h-4v4h-2v-4h-4v-2h4V7h2v4h4v2zm-8-6H2v1h12V7zM2 12h8v-1H2v1zm0 4h8v-1H2v1z"></path>
+                    </svg>
+                    Simpan
+                </button>
+                <button class="action-button">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <div class="creator-info">
+            <div class="creator-avatar">
+                <img src="/api/placeholder/50/50" alt="Warner Bros. Pictures">
+            </div>
+            <div class="creator-details">
+                <div class="creator-name">Warner Bros. Pictures</div>
+                <div class="subscriber-count">25.8 juta subscriber</div>
+            </div>
+            <button class="subscribe-button">SUBSCRIBE</button>
+        </div>
+        
+        <div class="video-description">
+            Seorang agen rahasia menyandang misi penting dalam pencegahan Perang Dunia III melalui manipulasi waktu. Agen ini harus mempelajari teknologi "inversi" yang memungkinkan objek bergerak mundur terhadap waktu, sambil menghadapi ancaman global dari masa depan. Film karya Christopher Nolan penuh dengan aksi mendebarkan dan konsep perjalanan waktu yang memutar otak.
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const videoContainer = document.getElementById('videoContainer');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const videoControls = document.getElementById('videoControls');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const playPauseButton = document.getElementById('playPauseButton');
+            const volumeButton = document.getElementById('volumeButton');
+            const volumeSlider = document.getElementById('volumeSlider');
+            const volumeLevel = document.getElementById('volumeLevel');
+            const timeDisplay = document.getElementById('timeDisplay');
+            const fullscreenButton = document.getElementById('fullscreenButton');
+            const settingsButton = document.getElementById('settingsButton');
+            const settingsMenu = document.getElementById('settingsMenu');
+            const theaterButton = document.getElementById('theaterButton');
+            const qualityOption = document.getElementById('qualityOption');
+            const playbackSpeedOption = document.getElementById('playbackSpeedOption');
+            
+            const playIcon = playPauseButton.querySelector('.play-icon');
+            const pauseIcon = playPauseButton.querySelector('.pause-icon');
+            const fullscreenIcon = fullscreenButton.querySelector('.fullscreen-icon');
+            const fullscreenExitIcon = fullscreenButton.querySelector('.fullscreen-exit-icon');
+            const volumeHighIcon = volumeButton.querySelector('.volume-high');
+            const volumeLowIcon = volumeButton.querySelector('.volume-low');
+            const volumeMuteIcon = volumeButton.querySelector('.volume-mute');
+            
+            let isPlaying = false;
+            let isMuted = false;
+            let isFullscreen = false;
+            let isTheaterMode = false;
+            let hideControlsTimeout;
+            let currentQuality = '1080p';
+            let currentSpeed = 'Normal';
+            
+            // Show placeholder for video
+            videoPlayer.poster = '/api/placeholder/1280/720';
+            
+            // Toggle play/pause
+            function togglePlay() {
+                if (videoPlayer.paused || videoPlayer.ended) {
+                    videoPlayer.play();
+                    isPlaying = true;
+                    playIcon.style.display = 'none';
+                    pauseIcon.style.display = 'block';
+                } else {
+                    videoPlayer.pause();
+                    isPlaying = false;
+                    playIcon.style.display = 'block';
+                    pauseIcon.style.display = 'none';
+                }
+            }
+            
+            // Update progress bar
+            function updateProgress() {
+                const progressPercentage = (videoPlayer.currentTime / videoPlayer.duration) * 100;
+                progressBar.style.width = `${progressPercentage}%`;
+                
+                const currentMinutes = Math.floor(videoPlayer.currentTime / 60);
+                const currentSeconds = Math.floor(videoPlayer.currentTime % 60);
+                const totalMinutes = Math.floor(videoPlayer.duration / 60);
+                const totalSeconds = Math.floor(videoPlayer.duration % 60);
+                
+                timeDisplay.textContent = `${currentMinutes}:${currentSeconds < 10 ? '0' : ''}${currentSeconds} / ${totalMinutes}:${totalSeconds < 10 ? '0' : ''}${totalSeconds}`;
+            }
+            
+            // Seek in video
+            function seek(e) {
+                const rect = progressContainer.getBoundingClientRect();
+                const seekPos = (e.clientX - rect.left) / rect.width;
+                videoPlayer.currentTime = seekPos * videoPlayer.duration;
+            }
+            
+            // Toggle mute
+            function toggleMute() {
+                if (videoPlayer.volume === 0 || videoPlayer.muted) {
+                    videoPlayer.muted = false;
+                    videoPlayer.volume = 0.7;
+                    volumeLevel.style.width = `${videoPlayer.volume * 100}%`;
+                    volumeHighIcon.style.display = 'block';
+                    volumeLowIcon.style.display = 'none';
+                    volumeMuteIcon.style.display = 'none';
+                } else {
+                    videoPlayer.muted = true;
+                    volumeHighIcon.style.display = 'none';
+                    volumeLowIcon.style.display = 'none';
+                    volumeMuteIcon.style.display = 'block';
+                }
+            }
+            
+            // Update volume
+            function updateVolume(e) {
+                const rect = volumeSlider.getBoundingClientRect();
+                let volLevel = (e.clientX - rect.left) / rect.width;
+                
+                if (volLevel < 0) volLevel = 0;
+                if (volLevel > 1) volLevel = 1;
+                
+                videoPlayer.volume = volLevel;
+                volumeLevel.style.width = `${volLevel * 100}%`;
+                
+                if (volLevel === 0) {
+                    volumeHighIcon.style.display = 'none';
+                    volumeLowIcon.style.display = 'none';
+                    volumeMuteIcon.style.display = 'block';
