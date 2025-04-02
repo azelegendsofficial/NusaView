@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NusaView - Titanic 666 Film</title>
+    <style>
+        :root {
+            --primary-color: #e50914;
+            --dark-bg: #141414;
+            --secondary-bg: #181818;
+            --text-color: #ffffff;
+            --secondary-text: #b3b3b3;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background-color: black;
+            overflow: hidden;
+        }
+        
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .controls-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 30px 20px 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .video-container:hover .controls-container,
+        .controls-container.active {
+            opacity: 1;
+        }
+        
+        .video-controls {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .play-pause, .volume-btn, .fullscreen-btn {
+            background: none;
+            border: none;
+            color: white;
+            margin-right: 15px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .play-pause:hover, .volume-btn:hover, .fullscreen-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .progress-container {
+            flex: 1;
+            height: 5px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            margin: 0 15px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 5px;
+            width: 0;
+        }
+        
+        .buffer-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.4);
+            border-radius: 5px;
+            width: 0;
+        }
+        
+        .time-display {
+            color: white;
+            font-size: 14px;
+            margin-left: 15px;
+        }
+        
+        .settings-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        
+        .settings-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            margin-left: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .settings-dropdown {
+            position: absolute;
+            bottom: 70px;
+            right: 20px;
+            background-color: rgba(28, 28, 28, 0.9);
+            border-radius: 5px;
+            width: 200px;
+            padding: 15px;
+            display: none;
+        }
+        
+        .settings-dropdown.active {
+            display: block;
+        }
+        
+        .settings-dropdown h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: var(--secondary-text);
+        }
+        
+        .resolution-options {
+            list-style: none;
+        }
+        
+        .resolution-options li {
+            padding: 8px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .resolution-options li:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .resolution-options li.active {
+            color: var(--primary-color);
+        }
+        
+        .resolution-check {
+            display: none;
+        }
+        
+        .resolution-options li.active .resolution-check {
+            display: inline;
+        }
+        
+        .video-info {
+            position: absolute;
+            top: 20px;
+            left: 70px;
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 15px;
+            border-radius: 5px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .video-container:hover .video-info {
+            opacity: 1;
+        }
+        
+        .video-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        
+        .resolution-badge {
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 12px;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+        
+        .loading-indicator.active {
+            display: block;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .volume-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .volume-slider {
+            width: 0;
+            height: 5px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            overflow: hidden;
+            transition: width 0.3s ease;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        
+        .volume-container:hover .volume-slider {
+            width: 80px;
+        }
+        
+        .volume-progress {
+            height: 100%;
+            background-color: white;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" id="backButton">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+    </button>
+    
+    <div class="video-container" id="videoContainer">
+        <video id="videoPlayer" poster="data:image/jpeg;base64,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"
+          
+        <div class="video-info">
+            <div class="video-title">Titanic 666</div>
+            <div class="resolution-badge" id="currentResolution">480p</div>
+        </div>
+        
+        <div class="loading-indicator" id="loadingIndicator">
+            <div class="spinner"></div>
+        </div>
+        
+        <div class="controls-container" id="controlsContainer">
+            <div class="video-controls">
+                <button class="play-pause" id="playPauseBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" id="playIcon">
+                        <polygon points="5 3 19 12 5 21"></polygon>
+                    </svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" id="pauseIcon" style="display: none;">
+                        <rect x="6" y="4" width="4" height="16"></rect>
+                        <rect x="14" y="4" width="4" height="16"></rect>
+                    </svg>
+                </button>
+                
+                <div class="volume-container">
+                    <button class="volume-btn" id="volumeBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="volumeIcon">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19"></polygon>
+                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                        </svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="muteIcon" style="display: none;">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19"></polygon>
+                            <line x1="23" y1="9" x2="17" y2="15"></line>
+                            <line x1="17" y1="9" x2="23" y2="15"></line>
+                        </svg>
+                    </button>
+                    <div class="volume-slider" id="volumeSlider">
+                        <div class="volume-progress" id="volumeProgress"></div>
+                    </div>
+                </div>
+                
+                <div class="progress-container" id="progressContainer">
+                    <div class="buffer-bar" id="bufferBar"></div>
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <div class="time-display">
+                    <span id="currentTime">0:00</span> / <span id="duration">1:30:42</span>
+                </div>
+                
+                <button class="fullscreen-btn" id="fullscreenBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="expandIcon">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                    </svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="shrinkIcon" style="display: none;">
+                        <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="settings-container">
+                <button class="settings-btn" id="settingsBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                </button>
+                
+                <div class="settings-dropdown" id="settingsDropdown">
+                    <h3>Kualitas Video</h3>
+                    <ul class="resolution-options" id="resolutionOptions">
+                        <li data-resolution="480p" class="active">
+                            480p
+                            <svg class="resolution-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </li>
+                        <li data-resolution="720p">
+                            720p
+                            <svg class="resolution-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </li>
+                        <li data-resolution="1080p">
+                            1080p
+                            <svg class="resolution-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </li>
+                        <li data-resolution="4K">
+                            4K
+                            <svg class="resolution-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </li>
+                        <li data-resolution="4K HDR">
+                            4K + HDR
+                            <svg class="resolution-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </li>
+                        <li data-resolution="8K">
+                            8K
+                            <svg class="resolution-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </li>
+                        <li data-resolution="8K HDR">
+                            8K + HDR
+                            <svg class="resolution-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </li>
+                        <li data-resolution="8K SUPER HDR">
+                            8K + SUPER HDR
+                            <svg class="resolution-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Video sources for different resolutions
+            const videoSources = {
+                "480p": {
+                    blur: 20,
+                    filter: 'brightness(0.8) contrast(0.8)',
+                    quality: 'rendah'
+                },
+                "720p": {
+                    blur: 10,
+                    filter: 'brightness(0.9) contrast(0.9)',
+                    quality: 'sedang'
+                },
+                "1080p": {
+                    blur: 0,
+                    filter: 'brightness(1) contrast(1)',
+                    quality: 'tinggi'
+                },
+                "4K": {
+                    blur: 0,
+                    filter: 'brightness(1.1) contrast(1.1) saturate(1.1)',
+                    quality: 'sangat tinggi'
+                },
+                "4K HDR": {
+                    blur: 0,
+                    filter: 'brightness(1.2) contrast(1.2) saturate(1.2)',
+                    quality: 'maksimal'
+                },
+                "8K": {
+                    blur: 0,
+                    filter: 'brightness(1.1) contrast(1.15) saturate(1.15)',
+                    quality: 'ultra-high'
+                },
+                "8K HDR": {
+                    blur: 0,
+                    filter: 'brightness(1.25) contrast(1.25) saturate(1.3)',
+                    quality: 'extreme'
+                },
+                "8K SUPER HDR": {
+                    blur: 0,
+                    filter: 'brightness(1.35) contrast(1.4) saturate(1.45)',
+                    quality: 'maximum'
+                }
+            };
+            
+            // Elements
+            const videoPlayer = document.getElementById('videoPlayer');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const playIcon = document.getElementById('playIcon');
+            const pauseIcon = document.getElementById('pauseIcon');
+            const volumeBtn = document.getElementById('volumeBtn');
+            const volumeIcon = document.getElementById('volumeIcon');
+            const muteIcon = document.getElementById('muteIcon');
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            const expandIcon = document.getElementById('expandIcon');
+            const shrinkIcon = document.getElementById('shrinkIcon');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const bufferBar = document.getElementById('bufferBar');
+            const currentTime = document.getElementById('currentTime');
+            const duration = document.getElementById('duration');
+            const settingsBtn = document.getElementById('settingsBtn');
+            const settingsDropdown = document.getElementById('settingsDropdown');
+            const resolutionOptions = document.getElementById('resolutionOptions');
+            const currentResolution = document.getElementById('currentResolution');
+            const volumeSlider = document.getElementById('volumeSlider');
+            const volumeProgress = document.getElementById('volumeProgress');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const controlsContainer = document.getElementById('controlsContainer');
+            const videoContainer = document.getElementById('videoContainer');
+            const backButton = document.getElementById('backButton');
+            
+            // Set initial video source (placeholder video for simulation)
+            videoPlayer.src = "https://dl.dropboxusercontent.com/scl/fi/3ztp2cvsik931qa4yju3z/Titanic-666-3-KOYPsOU78pk.mp4?rlkey=1pj5kx4s28g06v6f39jffbrmg&st=ft9t559g"; // This is just a placeholder
+            
+            // Variables for tracking
+            let controlsTimeout;
+            let isFullscreen = false;
+            let isMuted = false;
+            let isChangingResolution = false;
+            
+            // Initialize the video player
+            function initPlayer() {
+                // Set initial resolution to 480p
+                setResolution('480p');
+                
+                // Set initial volume
+                videoPlayer.volume = 1;
+                updateVolumeProgress();
+                
+                // Add event listeners
+                playPauseBtn.addEventListener('click', togglePlayPause);
+                videoPlayer.addEventListener('click', togglePlayPause);
+                volumeBtn.addEventListener('click', toggleMute);
+                fullscreenBtn.addEventListener('click', toggleFullscreen);
+                settingsBtn.addEventListener('click', toggleSettings);
+                
+                videoPlayer.addEventListener('timeupdate', updateProgress);
+                videoPlayer.addEventListener('progress', updateBuffer);
+                videoPlayer.addEventListener('loadedmetadata', updateDuration);
+                videoPlayer.addEventListener('waiting', showLoading);
+                videoPlayer.addEventListener('playing', hideLoading);
+                videoPlayer.addEventListener('play', updatePlayPauseIcon);
+                videoPlayer.addEventListener('pause', updatePlayPauseIcon);
+                
+                progressContainer.addEventListener('click', seek);
+                volumeSlider.addEventListener('click', changeVolume);
+                
+                // Handle resolution changes
+                resolutionOptions.querySelectorAll('li').forEach(option => {
+                    option.addEventListener('click', function() {
+                        const newResolution = this.getAttribute('data-resolution');
+                        setResolution(newResolution);
+                    });
+                });
+                
+                // Hide controls when inactive
+                videoContainer.addEventListener('mousemove', showControls);
+                
+                // Back button
+                backButton.addEventListener('click', function() {
+                    // In a real application, this would navigate back to the main page
+                    alert('Kembali ke halaman utama');
+                });
+                
+                // Simulate video loading initially
+                showLoading();
+                setTimeout(hideLoading, 2000);
+            }
+            
+            // Play/Pause toggle
+            function togglePlayPause() {
+                if (videoPlayer.paused) {
+                    videoPlayer.play();
+                } else {
+                    videoPlayer.pause();
+                }
+            }
+            
+            // Update play/pause icon
+            function updatePlayPauseIcon() {
+                if (videoPlayer.paused) {
+                    playIcon.style.display = 'block';
+                    pauseIcon.style.display = 'none';
+                } else {
+                    playIcon.style.display = 'none';
+                    pauseIcon.style.display = 'block';
+                }
+            }
+            
+            // Toggle mute
+            function toggleMute() {
+                isMuted = !isMuted;
+                videoPlayer.muted = isMuted;
+                
+                if (isMuted) {
+                    volumeIcon.style.display = 'none';
+                    muteIcon.style.display = 'block';
+                    volumeProgress.style.width = '0%';
+                } else {
+                    volumeIcon.style.display = 'block';
+                    muteIcon.style.display = 'none';
+                    updateVolumeProgress();
+                }
+            }
+            
+            // Update volume progress bar
+            function updateVolumeProgress() {
+                volumeProgress.style.width = (videoPlayer.volume * 100) + '%';
+            }
+            
+            // Change volume
+            function changeVolume(e) {
+                const rect = volumeSlider.getBoundingClientRect();
+                const position = (e.clientX - rect.left) / rect.width;
+                videoPlayer.volume = Math.max(0, Math.min(1, position));
+                
+                if (videoPlayer.volume === 0) {
+                    volumeIcon.style.display = 'none';
+                    muteIcon.style.display = 'block';
+                    isMuted = true;
+                    videoPlayer.muted = true;
+                } else {
+                    volumeIcon.style.display = 'block';
+                    muteIcon.style.display = 'none';
+                    isMuted = false;
+                    videoPlayer.muted = false;
+                }
+                
+                updateVolumeProgress();
+            }
+            
+            // Toggle fullscreen
+            function toggleFullscreen() {
+                if (!isFullscreen) {
+                    if (videoContainer.requestFullscreen) {
+                        videoContainer.requestFullscreen();
+                    } else if (videoContainer.webkitRequestFullscreen) {
+                        videoContainer.webkitRequestFullscreen();
+                    } else if (videoContainer.msRequestFullscreen) {
+                        videoContainer.msRequestFullscreen();
+                    }
+                    
+                    expandIcon.style.display = 'none';
+                    shrinkIcon.style.display = 'block';
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    } else if (document.msExitFullscreen) {
+                        document.msExitFullscreen();
+                    }
+                    
+                    expandIcon.style.display = 'block';
+                    shrinkIcon.style.display = 'none';
+                }
+                
+                isFullscreen = !isFullscreen;
+            }
+            
+            // Update progress bar
+            function updateProgress() {
+                const progress = (videoPlayer.currentTime / videoPlayer.duration) * 100;
+                progressBar.style.width = progress + '%';
+                
+                // Update current time display
+                currentTime.textContent = formatTime(videoPlayer.currentTime);
+            }
+            
+            // Update buffer bar
+            function updateBuffer() {
+                if (videoPlayer.buffered.length > 0) {
+                    const bufferedEnd = videoPlayer.buffered.end(videoPlayer.buffered.length - 1);
+                    const duration = videoPlayer.duration;
+                    
+                    if (duration > 0) {
+                        const bufferedPercent = (bufferedEnd / duration) * 100;
+                        bufferBar.style.width = bufferedPercent + '%';
+                    }
+                }
+            }
+            
+            // Update duration display
+            function updateDuration() {
+                duration.textContent = formatTime(videoPlayer.duration);
+            }
+            
+            // Format time to MM:SS
+            function formatTime(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                seconds = Math.floor(seconds % 60);
+                return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+            }
+            
+            // Seek in video
+            function seek(e) {
+                const rect = progressContainer.getBoundingClientRect();
+                const position = (e.clientX - rect.left) / rect.width;
+                videoPlayer.currentTime = position * videoPlayer.duration;
+            }
+            
+            // Toggle settings dropdown
+            function toggleSettings(e) {
+                e.stopPropagation();
+                settingsDropdown.classList.toggle('active');
+                
+                // Hide settings when clicking outside
+                if (settingsDropdown.classList.contains('active')) {
+                    setTimeout(() => {
+                        document.addEventListener('click', closeSettings);
+                    }, 10);
+                } else {
+                    document.removeEventListener('click', closeSettings);
+                }
+            }
+            
+            // Close settings dropdown
+            function closeSettings(e) {
+                if (!settingsDropdown.contains(e.target) && e.target !== settingsBtn) {
+                    settingsDropdown.classList.remove('active');
+                    document.removeEventListener('click', closeSettings);
+                }
+            }
+            
+            // Set resolution
+            function setResolution(resolution) {
+                if (isChangingResolution) return;
+                
+                isChangingResolution = true;
+                const currentTime = videoPlayer.currentTime;
+                const isPaused = videoPlayer.paused;
+                
+                // Update active resolution in menu
+                resolutionOptions.querySelectorAll('li').forEach(option => {
+                    if (option.getAttribute('data-resolution') === resolution) {
+                        option.classList.add('active');
+                    } else {
+                        option.classList.remove('active');
+                    }
+                });
+                
+                // Update resolution badge
+                currentResolution.textContent = resolution;
+                
+                // Show loading
+                showLoading();
+                
+                // Simulate changing resolution
+                // In a real implementation, you would change the video source here
+                setTimeout(() => {
+                    // Apply visual changes to simulate different resolutions
+                    const resSettings = videoSources[resolution];
+                    
+                    // Adjust video appearance to simulate different resolutions
+                    videoPlayer.style.filter = resSettings.filter;
+                    
+                    // If blur is needed for lower resolutions
+                    if (resSettings.blur > 0) {
+                        videoPlayer.style.filter += ` blur(${resSettings.blur}px)`;
+                    }
+                    
+                    // Resume playback from the same position
+                    videoPlayer.currentTime = currentTime;
+                    
+                    if (!isPaused) {
+                        videoPlayer.play();
+                    }
+                    
+                    // Hide loading and settings
+                    hideLoading();
+                    settingsDropdown.classList.remove('active');
+                    isChangingResolution = false;
+                    
+                    // Show temporary notification
+                    showResolutionNotification(resolution, resSettings.quality);
+                }, 2000);
+            }
+            
+            // Show loading indicator
+            function showLoading() {
+                loadingIndicator.classList.add('active');
+            }
+            
+            // Hide loading indicator
+            function hideLoading() {
+                loadingIndicator.classList.remove('active');
+            }
+            
+            // Show controls on mouse movement
+            function showControls() {
+                controlsContainer.classList.add('active');
+                
+                clearTimeout(controlsTimeout);
+                controlsTimeout = setTimeout(() => {
+                    if (!videoPlayer.paused && !settingsDropdown.classList.contains('active')) {
+                        controlsContainer.classList.remove('active');
+                    }
+                }, 3000);
+            }
+            
+            // Show resolution change notification
+function showResolutionNotification(resolution, quality) {
+    const notification = document.createElement('div');
+    notification.style.position = 'absolute';
+    notification.style.bottom = '80px';
+    notification.style.left = '20px';
+    notification.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    notification.style.padding = '10px 15px';
+    notification.style.borderRadius = '4px';
+    notification.style.color = 'white';
+    notification.style.fontSize = '14px';
+    notification.style.transition = 'opacity 0.5s ease';
+    notification.innerHTML = `Kualitas video diubah ke <strong>${resolution}</strong> (${quality})`;
+    
+    videoContainer.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => {
+            notification.remove();
+        }, 500);
+    }, 3000);
+}
+
+// Handle document fullscreen changes
+document.addEventListener('fullscreenchange', updateFullscreenIcon);
+document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
+document.addEventListener('mozfullscreenchange', updateFullscreenIcon);
+document.addEventListener('MSFullscreenChange', updateFullscreenIcon);
+
+function updateFullscreenIcon() {
+    if (document.fullscreenElement || 
+        document.webkitFullscreenElement || 
+        document.mozFullScreenElement || 
+        document.msFullscreenElement) {
+        expandIcon.style.display = 'none';
+        shrinkIcon.style.display = 'block';
+        isFullscreen = true;
+    } else {
+        expandIcon.style.display = 'block';
+        shrinkIcon.style.display = 'none';
+        isFullscreen = false;
+    }
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    if (e.code === 'Space') {
+        e.preventDefault();
+        togglePlayPause();
+    } else if (e.code === 'ArrowRight') {
+        videoPlayer.currentTime += 10;
+    } else if (e.code === 'ArrowLeft') {
+        videoPlayer.currentTime -= 10;
+    } else if (e.code === 'ArrowUp') {
+        videoPlayer.volume = Math.min(1, videoPlayer.volume + 0.1);
+        updateVolumeProgress();
+        if (videoPlayer.muted) {
+            toggleMute();
+        }
+    } else if (e.code === 'ArrowDown') {
+        videoPlayer.volume = Math.max(0, videoPlayer.volume - 0.1);
+        updateVolumeProgress();
+        if (videoPlayer.volume === 0) {
+            volumeIcon.style.display = 'none';
+            muteIcon.style.display = 'block';
+        }
+    } else if (e.code === 'KeyF') {
+        toggleFullscreen();
+    } else if (e.code === 'KeyM') {
+        toggleMute();
+    }
+});
+
+// Handle video end
+videoPlayer.addEventListener('ended', function() {
+    playIcon.style.display = 'block';
+    pauseIcon.style.display = 'none';
+});
+
+// Add double-click for fullscreen
+videoPlayer.addEventListener('dblclick', toggleFullscreen);
+
+// Initialize the player
+initPlayer();
+});
+</script>
+</body>
+</html>
