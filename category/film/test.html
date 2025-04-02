@@ -674,3 +674,220 @@
                     volumeHighIcon.style.display = 'none';
                     volumeLowIcon.style.display = 'none';
                     volumeMuteIcon.style.display = 'block';
+
+                    } else if (volLevel < 0.5) {
+                    volumeHighIcon.style.display = 'none';
+                    volumeLowIcon.style.display = 'block';
+                    volumeMuteIcon.style.display = 'none';
+                } else {
+                    volumeHighIcon.style.display = 'block';
+                    volumeLowIcon.style.display = 'none';
+                    volumeMuteIcon.style.display = 'none';
+                }
+            }
+            
+            // Toggle fullscreen
+            function toggleFullscreen() {
+                if (!isFullscreen) {
+                    if (videoContainer.requestFullscreen) {
+                        videoContainer.requestFullscreen();
+                    } else if (videoContainer.mozRequestFullScreen) {
+                        videoContainer.mozRequestFullScreen();
+                    } else if (videoContainer.webkitRequestFullscreen) {
+                        videoContainer.webkitRequestFullscreen();
+                    } else if (videoContainer.msRequestFullscreen) {
+                        videoContainer.msRequestFullscreen();
+                    }
+                    
+                    isFullscreen = true;
+                    fullscreenIcon.style.display = 'none';
+                    fullscreenExitIcon.style.display = 'block';
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.mozCancelFullScreen) {
+                        document.mozCancelFullScreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    } else if (document.msExitFullscreen) {
+                        document.msExitFullscreen();
+                    }
+                    
+                    isFullscreen = false;
+                    fullscreenIcon.style.display = 'block';
+                    fullscreenExitIcon.style.display = 'none';
+                }
+            }
+            
+            // Toggle theater mode
+            function toggleTheaterMode() {
+                videoContainer.classList.toggle('theater-mode');
+                isTheaterMode = !isTheaterMode;
+            }
+            
+            // Toggle settings menu
+            function toggleSettingsMenu() {
+                settingsMenu.classList.toggle('active');
+            }
+            
+            // Hide controls after delay
+            function hideControls() {
+                clearTimeout(hideControlsTimeout);
+                hideControlsTimeout = setTimeout(() => {
+                    if (isPlaying) {
+                        videoControls.classList.remove('active');
+                    }
+                }, 3000);
+            }
+            
+            // Show controls
+            function showControls() {
+                videoControls.classList.add('active');
+                hideControls();
+            }
+            
+            // Set quality
+            function setQuality(quality) {
+                currentQuality = quality;
+                qualityOption.querySelector('.menu-value').textContent = quality;
+                settingsMenu.classList.remove('active');
+                
+                // Actual implementation would switch video source
+                console.log(`Quality set to ${quality}`);
+            }
+            
+            // Set playback speed
+            function setPlaybackSpeed(speed) {
+                currentSpeed = speed;
+                const speedValue = speed === 'Normal' ? 1 : parseFloat(speed);
+                videoPlayer.playbackRate = speedValue;
+                playbackSpeedOption.querySelector('.menu-value').textContent = speed;
+                settingsMenu.classList.remove('active');
+            }
+            
+            // Event listeners
+            playPauseButton.addEventListener('click', togglePlay);
+            videoPlayer.addEventListener('click', togglePlay);
+            
+            videoPlayer.addEventListener('timeupdate', updateProgress);
+            
+            progressContainer.addEventListener('click', seek);
+            
+            volumeButton.addEventListener('click', toggleMute);
+            volumeSlider.addEventListener('click', updateVolume);
+            
+            fullscreenButton.addEventListener('click', toggleFullscreen);
+            theaterButton.addEventListener('click', toggleTheaterMode);
+            
+            settingsButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleSettingsMenu();
+            });
+            
+            // Close settings menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!settingsButton.contains(e.target) && !settingsMenu.contains(e.target)) {
+                    settingsMenu.classList.remove('active');
+                }
+            });
+            
+            // Show/hide controls on mouse movement
+            videoContainer.addEventListener('mousemove', showControls);
+            videoContainer.addEventListener('mouseleave', () => {
+                if (isPlaying) {
+                    videoControls.classList.remove('active');
+                }
+            });
+            
+            // Handle quality options
+            document.getElementById('qualityOption').addEventListener('click', () => {
+                const qualities = ['1080p', '720p', '480p', '360p', '240p', 'Auto'];
+                const currentIndex = qualities.indexOf(currentQuality);
+                const nextIndex = (currentIndex + 1) % qualities.length;
+                setQuality(qualities[nextIndex]);
+            });
+            
+            // Handle playback speed options
+            document.getElementById('playbackSpeedOption').addEventListener('click', () => {
+                const speeds = ['0.25', '0.5', '0.75', 'Normal', '1.25', '1.5', '1.75', '2'];
+                const currentIndex = speeds.indexOf(currentSpeed);
+                const nextIndex = (currentIndex + 1) % speeds.length;
+                setPlaybackSpeed(speeds[nextIndex]);
+            });
+            
+            // Handle fullscreen change event
+            document.addEventListener('fullscreenchange', () => {
+                isFullscreen = !!document.fullscreenElement;
+                if (isFullscreen) {
+                    fullscreenIcon.style.display = 'none';
+                    fullscreenExitIcon.style.display = 'block';
+                } else {
+                    fullscreenIcon.style.display = 'block';
+                    fullscreenExitIcon.style.display = 'none';
+                }
+            });
+            
+            // Handle keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                switch (e.key.toLowerCase()) {
+                    case ' ':
+                    case 'k':
+                        togglePlay();
+                        break;
+                    case 'f':
+                        toggleFullscreen();
+                        break;
+                    case 't':
+                        toggleTheaterMode();
+                        break;
+                    case 'm':
+                        toggleMute();
+                        break;
+                    case 'arrowleft':
+                        videoPlayer.currentTime = Math.max(videoPlayer.currentTime - 5, 0);
+                        break;
+                    case 'arrowright':
+                        videoPlayer.currentTime = Math.min(videoPlayer.currentTime + 5, videoPlayer.duration);
+                        break;
+                    case 'arrowup':
+                        videoPlayer.volume = Math.min(videoPlayer.volume + 0.1, 1);
+                        volumeLevel.style.width = `${videoPlayer.volume * 100}%`;
+                        if (videoPlayer.volume > 0) {
+                            videoPlayer.muted = false;
+                            if (videoPlayer.volume < 0.5) {
+                                volumeHighIcon.style.display = 'none';
+                                volumeLowIcon.style.display = 'block';
+                                volumeMuteIcon.style.display = 'none';
+                            } else {
+                                volumeHighIcon.style.display = 'block';
+                                volumeLowIcon.style.display = 'none';
+                                volumeMuteIcon.style.display = 'none';
+                            }
+                        }
+                        break;
+                    case 'arrowdown':
+                        videoPlayer.volume = Math.max(videoPlayer.volume - 0.1, 0);
+                        volumeLevel.style.width = `${videoPlayer.volume * 100}%`;
+                        if (videoPlayer.volume === 0) {
+                            volumeHighIcon.style.display = 'none';
+                            volumeLowIcon.style.display = 'none';
+                            volumeMuteIcon.style.display = 'block';
+                        } else if (videoPlayer.volume < 0.5) {
+                            volumeHighIcon.style.display = 'none';
+                            volumeLowIcon.style.display = 'block';
+                            volumeMuteIcon.style.display = 'none';
+                        }
+                        break;
+                }
+            });
+            
+            // Initialize
+            videoControls.classList.add('active');
+            volumeLevel.style.width = `${videoPlayer.volume * 100}%`;
+            
+            // Set up time display
+            timeDisplay.textContent = '0:00 / 10:30';
+        });
+    </script>
+</body>
+</html>
