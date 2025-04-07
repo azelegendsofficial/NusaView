@@ -367,6 +367,35 @@
             }
         }
     </style>
+    <style>
+         #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease-out;
+        }
+        
+        #loading-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .loading-text {
+            position: absolute;
+            bottom: 20px;
+            color: white;
+            font-size: 24px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -381,8 +410,8 @@
         </svg>
         <h1>Layanan NusaView Sedang Mengalami Gangguan</h1>
         <p>Saat ini kami sedang mengalami masalah teknis dengan server kami. Tim teknis kami sedang bekerja untuk memulihkan layanan secepatnya. Mohon maaf atas ketidaknyamanan ini.</p>
-        <p>Estimasi pemulihan: <strong>7 April 2025, 16:00 WIB</strong></p>
-        <div class="alert-time">Pertama kali terdeteksi: 7 April 2025, 09:23 WIB</div>
+        <p>Estimasi pemulihan: <strong>9 April 2025, 16:00 WIT</strong></p>
+        <div class="alert-time">Pertama kali terdeteksi: 8 April 2025, 05:23 WIT</div>
     </div>
     
     <div class="status-container">
@@ -467,28 +496,28 @@
             
             <div class="timeline-events">
                 <div class="timeline-event">
-                    <div class="timeline-event-time">8 April 2025, 11:45 WIB</div>
+                    <div class="timeline-event-time">8 April 2025, 08:40 WIT</div>
                     <div class="timeline-event-content">
                         <strong>Pembaruan:</strong> Tim teknis telah mengidentifikasi sumber masalah pada kegagalan perangkat keras di pusat data utama. Sedang dilakukan penggantian perangkat yang rusak.
                     </div>
                 </div>
                 
                 <div class="timeline-event">
-                    <div class="timeline-event-time">8 April 2025, 10:30 WIB</div>
+                    <div class="timeline-event-time">8 April 2025, 06:30 WIT</div>
                     <div class="timeline-event-content">
                         <strong>Pembaruan:</strong> Layanan database masih offline. Tim sedang melakukan pemulihan dari backup. Sistem pembayaran mengalami gangguan intermiten.
                     </div>
                 </div>
                 
                 <div class="timeline-event">
-                    <div class="timeline-event-time">8 April 2025, 09:45 WIB</div>
+                    <div class="timeline-event-time">8 April 2025, 05:45 WIT</div>
                     <div class="timeline-event-content">
-                        <strong>Investigasi:</strong> Tim teknis sedang menyelidiki penyebab gangguan pada server streaming dan database. Estimasi awal pemulihan adalah 4-6 jam.
+                        <strong>Investigasi:</strong> Tim teknis sedang menyelidiki penyebab gangguan pada server streaming dan database. Estimasi awal pemulihan adalah 1 hari.
                     </div>
                 </div>
                 
                 <div class="timeline-event">
-                    <div class="timeline-event-time">8 April 2025, 09:23 WIB</div>
+                    <div class="timeline-event-time">8 April 2025, 05:23 WIT</div>
                     <div class="timeline-event-content">
                         <strong>Gangguan Terdeteksi:</strong> Sistem monitoring mendeteksi server streaming utama dan database tidak merespons. Penyelidikan dimulai.
                     </div>
