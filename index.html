@@ -596,5 +596,31 @@
             &copy; 2025 NusaView. Hak Cipta Dilindungi.
         </div>
     </footer>
+
+    <script>
+       document.addEventListener('DOMContentLoaded', function() {
+            const loadingScreen = document.getElementById('loading-screen');
+            const loadingVideo = document.getElementById('loading-video');
+            const content = document.getElementById('content');
+            
+            // Ketika video selesai, tampilkan halaman
+            loadingVideo.addEventListener('ended', function() {
+                // Animasi memudar
+                loadingScreen.style.opacity = '0';
+                
+                // Tunggu animasi memudar selesai, lalu sembunyikan loading screen
+                setTimeout(function() {
+                    loadingScreen.style.display = 'none';
+                    content.style.display = 'block';
+                }, 1000); // 1000ms = 1 detik (durasi transisi)
+            });
+            
+            // Fallback jika video gagal dimuat
+            loadingVideo.addEventListener('error', function() {
+                loadingScreen.style.display = 'none';
+                content.style.display = 'block';
+            });
+        });
+    </script>
 </body>
 </html>
