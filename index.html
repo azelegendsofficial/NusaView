@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NusaView - Login</title>
+    <style>
+        :root {
+            --primary-color: #e50914;
+            --dark-bg: #141414;
+            --secondary-bg: #181818;
+            --text-color: #ffffff;
+            --secondary-text: #b3b3b3;
+            --oauth-button-hover: #252525;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        header {
+            padding: 20px 4%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(0,0,0,0.8);
+        }
+        
+        .logo {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            text-decoration: none;
+        }
+        
+        /* Login Container */
+        .login-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .login-card {
+            background-color: var(--secondary-bg);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 450px;
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-header h1 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        
+        .login-header p {
+            color: var(--secondary-text);
+            font-size: 1rem;
+        }
+        
+        .oauth-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .oauth-button {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background-color: transparent;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .oauth-button:hover {
+            background-color: var(--oauth-button-hover);
+        }
+        
+        .oauth-button .icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .oauth-button svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .oauth-button .text {
+            flex: 1;
+        }
+        
+        .or-divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: var(--secondary-text);
+        }
+        
+        .or-divider::before,
+        .or-divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        .or-divider span {
+            padding: 0 15px;
+            font-size: 0.9rem;
+        }
+        
+        .legal-text {
+            margin-top: 30px;
+            font-size: 0.8rem;
+            color: var(--secondary-text);
+            text-align: center;
+            line-height: 1.5;
+        }
+        
+        .legal-text a {
+            color: var(--text-color);
+            text-decoration: none;
+        }
+        
+        .legal-text a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Footer */
+        footer {
+            padding: 20px 4%;
+            color: var(--secondary-text);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            .login-card {
+                padding: 30px 20px;
+            }
+            
+            .login-header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo">NusaView</a>
+    </header>
+    
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>Masuk ke NusaView</h1>
+                <p>Lanjutkan dengan akun media sosial Anda</p>
+            </div>
+            
+            <div class="oauth-container">
+                <a href="/auth/google" class="oauth-button" id="google-login">
+                    <div class="icon">
+                        <svg viewBox="0 0 24 24" fill="#fff">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                    </div>
+                    <span class="text">Lanjutkan dengan Google</span>
+                </a>
+                
+                <a href="/auth/facebook" class="oauth-button" id="facebook-login">
+                    <div class="icon">
+                        <svg viewBox="0 0 24 24" fill="#1877F2">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
+                    </div>
+                    <span class="text">Lanjutkan dengan Facebook</span>
+                </a>
+                
+                <a href="/auth/github" class="oauth-button" id="github-login">
+                    <div class="icon">
+                        <svg viewBox="0 0 24 24" fill="#fff">
+                            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+                        </svg>
+                    </div>
+                    <span class="text">Lanjutkan dengan GitHub</span>
+                </a>
+                
+                <a href="/auth/twitter" class="oauth-button" id="twitter-login">
+                    <div class="icon">
+                        <svg viewBox="0 0 24 24" fill="#1DA1F2">
+                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                        </svg>
+                    </div>
+                    <span class="text">Lanjutkan dengan Twitter</span>
+                </a>
+                
+                <a href="/auth/discord" class="oauth-button" id="discord-login">
+                    <div class="icon">
+                        <svg viewBox="0 0 24 24" fill="#5865F2">
+                            <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+                        </svg>
+                    </div>
+                    <span class="text">Lanjutkan dengan Discord</span>
+                </a>
+                
+                <a href="/auth/tiktok" class="oauth-button" id="tiktok-login">
+                    <div class="icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" fill="#000"/>
+                        </svg>
+                    </div>
+                    <span class="text">Lanjutkan dengan TikTok</span>
+                </a>
+                
+                <a href="/auth/microsoft" class="oauth-button" id="microsoft-login">
+                    <div class="icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M0 0h11.5v11.5H0V0z" fill="#F25022"/>
+                            <path d="M12.5 0H24v11.5H12.5V0z" fill="#7FBA00"/>
+                            <path d="M0 12.5h11.5V24H0V12.5z" fill="#00A4EF"/>
+                            <path d="M12.5 12.5H24V24H12.5V12.5z" fill="#FFB900"/>
+                        </svg>
+                    </div>
+                    <span class="text">Lanjutkan dengan Microsoft</span>
+                </a>
+            </div>
+            
+            <p class="legal-text">
+                Dengan melanjutkan, Anda menyetujui <a href="#">Syarat Layanan</a> dan <a href="#">Kebijakan Privasi</a> kami.
+            </p>
+        </div>
+    </div>
+    
+    <footer>
+        &copy; 2025 NusaView. Hak Cipta Dilindungi.
+    </footer>
+
+    <script>
+        // Event listeners for OAuth buttons
+        document.querySelectorAll('.oauth-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const provider = this.id.split('-')[0];
+                initiateOAuth(provider);
+            });
+        });
+        
+        // Function to handle OAuth login
+        function initiateOAuth(provider) {
+            // Define OAuth endpoints (in a real app, these would be proper endpoints)
+            const endpoints = {
+                google: '/auth/google',
+                facebook: '/auth/facebook',
+                github: '/auth/github',
+                twitter: '/auth/twitter',
+                discord: '/auth/discord',
+                tiktok: '/auth/tiktok',
+                microsoft: '/auth/microsoft'
+            };
+            
+            // Redirect to OAuth provider's authentication page
+            // In a real implementation, this would open a popup or redirect to the OAuth provider
+            const width = 600;
+            const height = 600;
+            const left = (window.innerWidth - width) / 2;
+            const top = (window.innerHeight - height) / 2;
+            
+            const authWindow = window.open(
+                endpoints[provider],
+                `${provider}Auth`,
+                `width=${width},height=${height},top=${top},left=${left}`
+            );
+            
+            // This part simulates a successful OAuth return
+            // In a real app, you'd have a callback endpoint that the OAuth provider redirects to
+            window.addEventListener('message', function(event) {
+                if (event.data.auth === 'success') {
+                    authWindow.close();
+                    // Store user data and redirect to dashboard
+                    storeUserData(event.data.userData);
+                    window.location.href = 'dashboard.html';
+                }
+            });
+            
+            // For demo purposes, simulate OAuth success after 2 seconds
+            setTimeout(() => {
+                // Mock user data as if returned from OAuth provider
+                const mockUserData = {
+                    id: `${provider}_12345`,
+                    name: `User from ${provider.charAt(0).toUpperCase() + provider.slice(1)}`,
+                    email: `user@${provider}.com`,
+                    profilePicture: `/api/placeholder/100/100`,
+                    provider: provider,
+                    accessToken: 'mock_access_token_' + Math.random().toString(36).substring(2)
+                };
+                
+                // Send success message to opener (this window)
+                authWindow.opener.postMessage({
+                    auth: 'success',
+                    userData: mockUserData
+                }, '*');
+            }, 2000);
+        }
+        
+        // Function to store user data in session and MySQL
+        function storeUserData(userData) {
+            // Store in session storage for client-side access
+            sessionStorage.setItem('user', JSON.stringify(userData));
+            
+            // In a real app, make an AJAX call to store in MySQL
+            fetch('/api/store-user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('User data stored in database:', data);
+            })
+            .catch(error => {
+                console.error('Error storing user data:', error);
+            });
+        }
+    </script>
+</body>
+</html>
