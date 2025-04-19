@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nusa View - Migrasi ke Astronix Streaming Music</title>
+    <title>Noton Film - Layanan Dihentikan</title>
     <style>
         :root {
-            --primary-color: #3a7bd5;
-            --secondary-color: #42c966;
-            --dark-bg: #1e2026;
-            --secondary-bg: #292c35;
+            --primary-color: #e50914;
+            --dark-bg: #141414;
+            --secondary-bg: #181818;
             --text-color: #ffffff;
             --secondary-text: #b3b3b3;
+            --astronix-color: #6200ea;
         }
         
         * {
@@ -24,468 +24,232 @@
         body {
             background-color: var(--dark-bg);
             color: var(--text-color);
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            width: 100%;
-        }
-        
-        .header {
-            text-align: center;
-            padding: 40px 0;
-            width: 100%;
-        }
-        
-        .logo-container {
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        header {
+            padding: 20px 4%;
+            display: flex;
             justify-content: center;
-            gap: 30px;
-            margin: 30px auto;
-            width: 100%;
-            max-width: 300px;
+            align-items: center;
+            background-color: var(--dark-bg);
         }
         
         .logo {
-            width: 100px;
-            height: 100px;
-            background-color: #222;
-            border-radius: 10px;
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            text-decoration: none;
+        }
+        
+        main {
+            flex: 1;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            font-size: 1.5rem;
-            overflow: hidden;
-        }
-        
-        .logo img {
-            max-width: 100%;
-            height: auto;
-        }
-        
-        .logo.nusa {
-            background-color: #2c3e50;
-            color: #ecf0f1;
-        }
-        
-        .logo.astronix {
-            background-color: #8e44ad;
-            color: #ecf0f1;
-        }
-        
-        .arrow {
-    font-size: 28px;
-    color: var(--text-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 10px;
-    font-weight: bold;
-}
-        
-        .announcement {
+            padding: 20px;
             text-align: center;
-            margin: 40px auto;
-            max-width: 900px;
-            padding: 0 20px;
         }
         
-        .announcement h1 {
+        .shutdown-container {
+            max-width: 800px;
+            background-color: var(--secondary-bg);
+            border-radius: 8px;
+            padding: 40px;
+            margin: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .shutdown-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        h1 {
             font-size: 2.5rem;
             margin-bottom: 20px;
-            line-height: 1.3;
         }
         
-        .announcement h1 span {
-            color: var(--secondary-color);
+        .message {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
         }
         
-        .announcement p {
-            font-size: 1.1rem;
-            color: var(--secondary-text);
-            max-width: 700px;
-            margin: 0 auto;
+        .astronix-promo {
+            background: linear-gradient(to right, rgba(98, 0, 234, 0.2), rgba(98, 0, 234, 0.1));
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+            border-left: 4px solid var(--astronix-color);
         }
         
-        .cards-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            justify-content: center;
-            margin: 60px auto;
-            max-width: 1200px;
-            padding: 0 20px;
-        }
-        
-        .card {
-            background-color: var(--secondary-bg);
-            border-radius: 10px;
-            padding: 30px;
-            width: 350px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            flex: 1 1 300px;
-            max-width: 380px;
-        }
-        
-        .card-header {
-            margin-bottom: 25px;
-        }
-        
-        .card-title {
-            font-size: 1.4rem;
+        .astronix-logo {
+            color: var(--astronix-color);
+            font-size: 1.8rem;
+            font-weight: bold;
             margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
         }
         
-        .discount-tag {
+        .astronix-message {
+            margin-bottom: 20px;
+        }
+        
+        .btn {
             display: inline-block;
-            background-color: var(--secondary-color);
-            color: white;
-            padding: 5px 10px;
+            padding: 12px 30px;
             border-radius: 4px;
             font-weight: bold;
-            font-size: 0.9rem;
-        }
-        
-        .card-subtitle {
-            color: var(--secondary-text);
-            font-size: 0.95rem;
-            margin-bottom: 5px;
-        }
-        
-        .feature-list {
-            margin: 25px 0;
-        }
-        
-        .feature-item {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 15px;
-        }
-        
-        .feature-icon {
-            color: var(--secondary-color);
-            margin-right: 12px;
-            font-weight: bold;
-        }
-        
-        .button {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 20px;
-            border-radius: 5px;
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            margin-top: 20px;
+            cursor: pointer;
             transition: all 0.3s ease;
+            border: none;
+            font-size: 1rem;
+            text-decoration: none;
+            margin: 10px;
         }
         
-        .button:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-        
-        .button-primary {
-            background-color: #4CAF50;
-        }
-        
-        .button-secondary {
-            background-color: #c62828;
-        }
-        
-        .button-tertiary {
-            background-color: #c62828;
-        }
-        
-        .migration-info {
-            background-color: var(--secondary-bg);
-            border-radius: 10px;
-            padding: 40px;
-            margin: 60px auto;
-            display: flex;
-            align-items: center;
-            gap: 40px;
-            max-width: 1100px;
-        }
-        
-        .migration-image {
-            flex: 0 0 auto;
-            width: 280px;
-            height: 200px;
-            background: linear-gradient(135deg, #3a7bd5, #8e44ad);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            font-weight: bold;
+        .btn-astronix {
+            background-color: var(--astronix-color);
             color: white;
-            text-align: center;
-            line-height: 1.3;
         }
         
-        .migration-content {
-            flex: 1;
+        .btn-astronix:hover {
+            background-color: #5000d6;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(98, 0, 234, 0.3);
         }
         
-        .migration-content h2 {
-            font-size: 1.8rem;
+        .btn-secondary {
+            background-color: rgba(109, 109, 110, 0.7);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(109, 109, 110, 0.9);
+        }
+        
+        .faq {
+            margin-top: 40px;
+            text-align: left;
+            width: 100%;
+        }
+        
+        .faq h2 {
             margin-bottom: 20px;
-            line-height: 1.3;
+            text-align: center;
         }
         
-        .migration-content p {
-            margin-bottom: 25px;
-            color: var(--secondary-text);
-            line-height: 1.7;
+        .faq-item {
+            margin-bottom: 20px;
         }
         
-        .read-more {
-            display: inline-block;
-            background-color: #1e3c72;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 5px;
-            text-decoration: none;
+        .faq-question {
             font-weight: bold;
-            transition: all 0.3s ease;
+            margin-bottom: 10px;
+            color: var(--primary-color);
         }
         
-        .read-more:hover {
-            background-color: #2a5298;
-            transform: translateY(-2px);
-        }
-        
-        .footer {
-            background-color: rgba(0, 0, 0, 0.2);
-            padding: 50px 0;
-            margin-top: 60px;
-        }
-        
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        .footer-logo {
-            font-size: 2rem;
-            font-weight: bold;
-        }
-        
-        .footer-links {
-            display: flex;
-            gap: 30px;
-        }
-        
-        .footer-links a {
-            color: var(--text-color);
-            text-decoration: none;
-            font-weight: 500;
-            transition: opacity 0.3s;
-        }
-        
-        .footer-links a:hover {
-            opacity: 0.8;
-        }
-        
-        .footer-bottom {
-            max-width: 1200px;
-            margin: 30px auto 0;
-            padding: 30px 20px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            justify-content: space-between;
+        footer {
+            padding: 20px 4%;
             color: var(--secondary-text);
             font-size: 0.9rem;
-        }
-        
-        .footer-bottom a {
-            color: var(--secondary-text);
-            text-decoration: none;
-            margin-left: 20px;
-            transition: opacity 0.3s;
-        }
-        
-        .footer-bottom a:hover {
-            opacity: 0.8;
-        }
-        
-        @media (max-width: 968px) {
-            .migration-info {
-                padding: 30px;
-                gap: 30px;
-            }
-            
-            .migration-image {
-                width: 240px;
-                height: 180px;
-                font-size: 1.6rem;
-            }
+            text-align: center;
         }
         
         @media (max-width: 768px) {
-            .announcement h1 {
-                font-size: 2rem;
+            .shutdown-container {
+                padding: 20px;
             }
             
-            .cards-container {
-                flex-direction: column;
-                align-items: center;
+            h1 {
+                font-size: 1.8rem;
             }
             
-            .card {
-                width: 100%;
-                max-width: 100%;
-            }
-            
-            .migration-info {
-                flex-direction: column;
-                padding: 25px;
-            }
-            
-            .migration-image {
-                width: 100%;
-                max-width: 280px;
-                margin-bottom: 20px;
-            }
-            
-            .footer-content {
-                flex-direction: column;
-                gap: 30px;
-            }
-            
-            .footer-bottom {
-                flex-direction: column;
-                gap: 20px;
-                align-items: center;
-                text-align: center;
-            }
-            
-            .footer-bottom a {
-                margin: 0 10px;
+            .message, .astronix-message {
+                font-size: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="logo-container">
-                <div class="logo nusa"><img src="data:image/png;base64,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" alt="NUSA Logo"></div>
-                <div class="arrow">→</div>
-                <div class="logo astronix"><img src="https://astronix.cc/assets/logo.png" alt="ASTRONIX Logo"></div>
-            </div>
-        </div>
-        
-        <div class="announcement">
-            <h1>KAMI TELAH BERGABUNG DENGAN <span>ASTRONIX STREAMING!</span></h1>
-            <p>Untuk menyediakan lebih banyak konten, teknologi streaming terkini, dan harga yang lebih terjangkau!</p>
-        </div>
-        
-        <div class="cards-container">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Pesan Layanan <span class="discount-tag">25% OFF</span></h2>
-                    <p class="card-subtitle">Premium Streaming, Harga Terjangkau.</p>
-                    <p class="card-subtitle">Mulai dari Rp75.000/bulan</p>
-                </div>
-                
-                <div class="feature-list">
-                    <div class="feature-item">
-                        <span class="feature-icon">✓</span>
-                        <span>Server Streaming Cepat</span>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-icon">✓</span>
-                        <span>Kualitas Lagu hingga 320Kbps</span>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-icon">✓</span>
-                        <span>Dukungan 24/7</span>
-                    </div>
-                </div>
-                
-                <a href="#" class="button button-primary">
-                    <span>Pesan Sekarang</span>
-                    <span>→</span>
-                </a>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Pelanggan Lama Panel</h2>
-                    <p class="card-subtitle">Sudah menjadi pelanggan Nusa View atau Astronix?</p>
-                    <p class="card-subtitle">Layanan Anda dapat dikelola di bawah ini.</p>
-                </div>
-                
-                <a href="#" class="button button-secondary">
-                    <span>Masuk ke Panel Kontrol</span>
-                    <span>→</span>
-                </a>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Pelanggan Lama Billing</h2>
-                    <p class="card-subtitle">Sudah menjadi pelanggan Nusa View atau Astronix?</p>
-                    <p class="card-subtitle">Login ke area klien Anda di bawah ini.</p>
-                </div>
-                
-                <a href="#" class="button button-tertiary">
-                    <span>Masuk ke Area Klien</span>
-                    <span>→</span>
-                </a>
-            </div>
-        </div>
-        
-        <div class="migration-info">
-            <div class="migration-image">
-                MIGRASI<br>KE<br>ASTRONIX
-            </div>
-            <div class="migration-content">
-                <h2>Nusa View bermigrasi ke Astronix Streaming Music</h2>
-                <p>Kami dengan bangga mengumumkan bahwa semua server streaming telah beralih ke Astronix Streaming Music. Bergabunglah dengan kami! Transisi ini akan meningkatkan pengalaman streaming Anda, karena Anda akan memiliki akses ke lebih banyak konten musik dan film dengan fitur tambahan untuk kustomisasi yang lebih baik. Ada banyak manfaat lain juga!</p>
-                <a href="#" class="read-more">Baca Selengkapnya</a>
-            </div>
-        </div>
-    </div>
+    <header>
+        <a href="#" class="logo">NOTON</a>
+    </header>
     
-    <div class="footer">
-        <div class="footer-content">
-            <div class="footer-logo">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="24" height="24" rx="4" fill="#8e44ad"/>
-                    <text x="12" y="16" font-size="12" font-weight="bold" fill="white" text-anchor="middle">AS</text>
-                </svg>
+    <main>
+        <div class="shutdown-container">
+            <div class="shutdown-icon">⚠️</div>
+            <h1>Layanan Noton Film Telah Dihentikan</h1>
+            <p class="message">
+                Dengan berat hati kami mengumumkan bahwa layanan streaming Noton Film telah dihentikan secara permanen mulai 15 April 2025. 
+                Keputusan sulit ini diambil setelah evaluasi menyeluruh terhadap perubahan pasar dan strategi bisnis kami ke depan.
+            </p>
+            <p class="message">
+                Kami berterima kasih atas dukungan dan kepercayaan Anda selama ini. Noton Film tidak akan menjadi seperti ini tanpa penonton setia seperti Anda.
+            </p>
+            
+            <div class="astronix-promo">
+                <div class="astronix-logo">ASTRONIX</div>
+                <p class="astronix-message">
+                    <strong>Kabar baik!</strong> Kami telah bergabung dengan Astronix, layanan streaming musik premium! 
+                    Sebagai pelanggan Noton Film, Anda berhak mendapatkan promo khusus:
+                </p>
+                <ul style="text-align: left; margin-bottom: 20px;">
+                    <li>3 bulan gratis untuk layanan streaming musik premium</li>
+                    <li>Akses ke jutaan lagu dan podcast eksklusif</li>
+                    <li>Konten audio tanpa iklan dan kualitas suara lossless</li>
+                </ul>
+                <a href="https://www.astronix.com/promo/noton" class="btn btn-astronix">Gabung Astronix Sekarang</a>
             </div>
-            <div class="footer-links">
-                <a href="#">Pesan Sekarang</a>
-                <a href="#">Panel Server</a>
-                <a href="#">Area Klien</a>
+            
+            <div class="faq">
+                <h2>Pertanyaan Umum</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question">Mengapa Noton Film dihentikan?</div>
+                    <div class="faq-answer">
+                        Keputusan ini diambil setelah evaluasi menyeluruh terhadap perubahan pasar streaming, meningkatnya biaya lisensi konten, dan tantangan persaingan yang semakin ketat. Strategi perusahaan kami sekarang akan berfokus pada layanan hiburan audio melalui kemitraan dengan Astronix.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">Bagaimana dengan langganan aktif saya?</div>
+                    <div class="faq-answer">
+                        Semua langganan aktif telah dihentikan secara otomatis dan Anda tidak akan dikenakan biaya lebih lanjut. Pembayaran pro-rata untuk sisa masa langganan Anda akan dikembalikan dalam 7-14 hari kerja.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">Apakah saya bisa mengakses daftar tontonan atau riwayat saya?</div>
+                    <div class="faq-answer">
+                        Sayang sekali, semua data pengguna termasuk daftar tontonan dan riwayat tidak lagi tersedia. Kami telah menghapus semua data sesuai dengan kebijakan privasi kami.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">Apa itu Astronix?</div>
+                    <div class="faq-answer">
+                        Astronix adalah layanan streaming musik premium yang menawarkan jutaan lagu, podcast, dan konten audio eksklusif dengan kualitas suara terbaik. Platform ini dirancang untuk memberikan pengalaman mendengarkan yang imersif dan personal.
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 40px;">
+                <a href="https://www.astronix.com/promo/noton" class="btn btn-astronix">Gabung Astronix Sekarang</a>
+                <a href="mailto:support@noton.com" class="btn btn-secondary">Hubungi Dukungan</a>
             </div>
         </div>
-        <div class="footer-bottom">
-            <div>Copyright © 2013-2025 Astronix Streaming Music. Hak Cipta Dilindungi.</div>
-            <div>
-                <a href="#">Kebijakan Privasi</a>
-                <a href="#">Persyaratan Layanan</a>
-                <a href="#">SLA</a>
-            </div>
+    </main>
+    
+    <footer>
+        <div class="copyright">
+            &copy; 2025 Noton Media Group. Hak Cipta Dilindungi.
         </div>
-    </div>
+    </footer>
 </body>
 </html>
