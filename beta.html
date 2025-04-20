@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NusaView</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #0a0a0a;
+            color: #fff;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            width: 90%;
+            z-index: 1000;
+            transition: all 0.5s ease;
+            background-color: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+        }
+
+        .navbar.scrolled {
+            top: 10px;
+            background-color: rgba(0, 0, 0, 0.9);
+            box-shadow: 0 0 15px #00ff4c, 0 0 30px rgba(0, 255, 76, 0.3);
+            border-radius: 30px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #00ff4c;
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4kTv0LrK2Xou-WKWLdfK8isI04PGWcPl4dA&s') no-repeat center/cover;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 700px;
+        }
+
+        .search-container {
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 50px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 10px rgba(0, 255, 76, 0.3);
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            background-color: #00ff4c;
+            color: black;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #00ff4c;
+            color: black;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 2px solid #00ff4c;
+            color: #00ff4c;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px rgba(0, 255, 76, 0.5);
+        }
+
+        .preset-container {
+            padding: 100px 50px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .preset-card {
+            background-color: #111;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0, 255, 76, 0.2);
+        }
+
+        .preset-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 20px rgba(0, 255, 76, 0.5);
+        }
+
+        .preset-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .preset-info {
+            padding: 20px;
+        }
+
+        .preset-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .preset-info p {
+            color: #aaa;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .preset-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .download-btn {
+            background-color: #00ff4c;
+            color: black;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .preset-author {
+            color: #777;
+            font-size: 0.8rem;
+        }
+
+        .social-media {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 100px;
+            margin-bottom: 50px;
+        }
+
+        .social-icon {
+            width: 50px;
+            height: 50px;
+            background-color: #111;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 76, 0.2);
+        }
+
+        .social-icon:hover {
+            background-color: #00ff4c;
+            transform: translateY(-5px);
+        }
+
+        footer {
+            background-color: #111;
+            padding: 30px 0;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        footer p {
+            color: #777;
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: #aaa;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #00ff4c;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="#" class="logo">NusaView</a>
+        <div class="nav-links">
+            <a href="/">Beranda</a>
+            <a href="#">Preset</a>
+            <a href="#">Tutorial</a>
+            <a href="#">Tentang</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>Preset Alight Motion Keren</h1>
+        <p>Temukan dan unduh preset Alight Motion terbaik untuk meningkatkan kualitas edit videomu</p>
+        
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Cari preset...">
+            <button class="search-btn">Cari</button>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn btn-primary">Download Aplikasi</button>
+            <button class="btn btn-secondary">Donasi</button>
+            <button class="btn btn-secondary">Media Sosial</button>
+        </div>
+    </section>
+
+    <section class="preset-container">
+        <div class="preset-card">
+            <img src="/api/placeholder/400/200" alt="Preset 1" class="preset-img">
+            <div class="preset-info">
+                <h3>Cinematic Film Look</h3>
+                <p>Preset profesional dengan efek film cinematic yang cocok untuk video storytelling.</p>
+                <div class="preset-actions">
+                    <button class="download-btn">Download</button>
+                    <span class="preset-author">by @filmmaker</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="preset-card">
+            <img src="/api/placeholder/400/200" alt="Preset 2" class="preset-img">
+            <div class="preset-info">
+                <h3>Neon Vibrant</h3>
+                <p>Efek neon vibrant dengan glow effect yang cocok untuk video musik atau dance.</p>
+                <div class="preset-actions">
+                    <button class="download-btn">Download</button>
+                    <span class="preset-author">by @neondesigner</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="preset-card">
+            <img src="/api/placeholder/400/200" alt="Preset 3" class="preset-img">
+            <div class="preset-info">
+                <h3>Smooth Transitions</h3>
+                <p>Kumpulan transisi halus yang memberikan efek profesional pada video pendek.</p>
+                <div class="preset-actions">
+                    <button class="download-btn">Download</button>
+                    <span class="preset-author">by @transition_master</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="preset-card">
+            <img src="/api/placeholder/400/200" alt="Preset 4" class="preset-img">
+            <div class="preset-info">
+                <h3>Glitch Effect</h3>
+                <p>Preset dengan efek glitch keren untuk video gaming atau tech content.</p>
+                <div class="preset-actions">
+                    <button class="download-btn">Download</button>
+                    <span class="preset-author">by @glitchpro</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="preset-card">
+            <img src="/api/placeholder/400/200" alt="Preset 5" class="preset-img">
+            <div class="preset-info">
+                <h3>Vintage Look</h3>
+                <p>Efek retro dan vintage yang memberikan nuansa nostalgia pada videomu.</p>
+                <div class="preset-actions">
+                    <button class="download-btn">Download</button>
+                    <span class="preset-author">by @retro_editor</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="preset-card">
+            <img src="/api/placeholder/400/200" alt="Preset 6" class="preset-img">
+            <div class="preset-info">
+                <h3>Aesthetic Vibe</h3>
+                <p>Preset aesthetic dengan tone pastel yang cocok untuk konten lifestyle.</p>
+                <div class="preset-actions">
+                    <button class="download-btn">Download</button>
+                    <span class="preset-author">by @aesthetic_vibes</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="social-media">
+        <a href="#" class="social-icon">IG</a>
+        <a href="#" class="social-icon">YT</a>
+        <a href="#" class="social-icon">TT</a>
+        <a href="#" class="social-icon">FB</a>
+    </div>
+
+    <footer>
+        <div class="footer-links">
+            <a href="#">Kebijakan Privasi</a>
+            <a href="#">Syarat & Ketentuan</a>
+            <a href="#">Kontak</a>
+            <a href="#">FAQ</a>
+        </div>
+        <p>&copy; 2025 NusaView - Semua Hak Dilindungi</p>
+    </footer>
+
+    <script>
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>
