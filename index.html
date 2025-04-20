@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NusaView - Layanan Dihentikan</title>
+    <title>NusaView - Kembali Beroperasi</title>
     <style>
         :root {
             --primary-color: #e50914;
@@ -11,7 +11,7 @@
             --secondary-bg: #181818;
             --text-color: #ffffff;
             --secondary-text: #b3b3b3;
-            --astronix-color: #6200ea;
+            --alight-color: #00c4ff;
         }
         
         * {
@@ -55,7 +55,7 @@
             text-align: center;
         }
         
-        .shutdown-container {
+        .relaunch-container {
             max-width: 800px;
             background-color: var(--secondary-bg);
             border-radius: 8px;
@@ -64,7 +64,7 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
         
-        .shutdown-icon {
+        .relaunch-icon {
             font-size: 4rem;
             margin-bottom: 20px;
             color: var(--primary-color);
@@ -81,23 +81,38 @@
             margin-bottom: 30px;
         }
         
-        .astronix-promo {
-            background: linear-gradient(to right, rgba(98, 0, 234, 0.2), rgba(98, 0, 234, 0.1));
+        .alight-promo {
+            background: linear-gradient(to right, rgba(0, 196, 255, 0.2), rgba(0, 196, 255, 0.1));
             border-radius: 8px;
             padding: 20px;
             margin: 30px 0;
-            border-left: 4px solid var(--astronix-color);
+            border-left: 4px solid var(--alight-color);
         }
         
-        .astronix-logo {
-            color: var(--astronix-color);
+        .alight-logo {
+            color: var(--alight-color);
             font-size: 1.8rem;
             font-weight: bold;
             margin-bottom: 15px;
         }
         
-        .astronix-message {
+        .alight-message {
             margin-bottom: 20px;
+        }
+        
+        .countdown {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 1.2rem;
+        }
+        
+        .countdown-timer {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--alight-color);
+            margin-top: 10px;
         }
         
         .btn {
@@ -113,15 +128,15 @@
             margin: 10px;
         }
         
-        .btn-astronix {
-            background-color: var(--astronix-color);
+        .btn-alight {
+            background-color: var(--alight-color);
             color: white;
         }
         
-        .btn-astronix:hover {
-            background-color: #5000d6;
+        .btn-alight:hover {
+            background-color: #00a8e0;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(98, 0, 234, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 196, 255, 0.3);
         }
         
         .btn-secondary {
@@ -131,6 +146,34 @@
         
         .btn-secondary:hover {
             background-color: rgba(109, 109, 110, 0.9);
+        }
+        
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .feature-item {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            width: calc(33.33% - 20px);
+            min-width: 200px;
+            text-align: center;
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--alight-color);
+        }
+        
+        .feature-title {
+            font-weight: bold;
+            margin-bottom: 10px;
         }
         
         .faq {
@@ -162,7 +205,7 @@
         }
         
         @media (max-width: 768px) {
-            .shutdown-container {
+            .relaunch-container {
                 padding: 20px;
             }
             
@@ -170,8 +213,12 @@
                 font-size: 1.8rem;
             }
             
-            .message, .astronix-message {
+            .message, .alight-message {
                 font-size: 1rem;
+            }
+            
+            .feature-item {
+                width: 100%;
             }
         }
     </style>
@@ -182,66 +229,83 @@
     </header>
     
     <main>
-        <div class="shutdown-container">
-            <div class="shutdown-icon">⚠️</div>
-            <h1>Layanan NusaView Telah Dihentikan</h1>
+        <div class="relaunch-container">
+            <div class="relaunch-icon">🎉</div>
+            <h1>NusaView Kembali Beroperasi!</h1>
             <p class="message">
-                Dengan berat hati kami mengumumkan bahwa layanan streaming film NusaView telah dihentikan secara permanen mulai 19 April 2025. 
-                Keputusan sulit ini diambil setelah evaluasi menyeluruh terhadap perubahan pasar dan strategi bisnis kami ke depan.
-            </p>
-            <p class="message">
-                Kami berterima kasih atas dukungan dan kepercayaan Anda selama ini. NusaView tidak akan menjadi seperti ini tanpa penonton setia seperti Anda.
+                Kabar gembira! NusaView kembali beroperasi dan akan menghadirkan pengalaman baru yang lebih keren dan kece!
+                Mulai tanggal 23 April 2025, kami akan bertransformasi menjadi platform preset Alight Motion terlengkap di Indonesia.
             </p>
             
-            <div class="astronix-promo">
-                <div class="astronix-logo">ASTRONIX</div>
-                <p class="astronix-message">
-                    <strong>Kabar baik!</strong> Kami telah bergabung dengan Astronix, layanan streaming musik premium! 
-                    Sebagai pelanggan NusaView, Anda berhak mendapatkan promo khusus:
+            <div class="countdown">
+                <div>Transformasi akan dimulai dalam:</div>
+                <div class="countdown-timer" id="countdown">3 Hari 00:00:00</div>
+            </div>
+            
+            <div class="alight-promo">
+                <div class="alight-logo">ALIGHT MOTION</div>
+                <p class="alight-message">
+                    <strong>NusaView Reborn!</strong> Kami akan menjadi pusat preset Alight Motion terbesar dan terlengkap
+                    untuk membantu kreator video mendapatkan hasil editing yang profesional.
                 </p>
-                <ul style="text-align: left; margin-bottom: 20px;">
-                    <li>3 bulan gratis untuk layanan streaming musik premium</li>
-                    <li>Akses ke jutaan lagu dan podcast eksklusif</li>
-                    <li>Konten audio tanpa iklan dan kualitas suara lossless</li>
-                </ul>
-                <a href="https://astronixid.vercel.app" class="btn btn-astronix">Gabung Astronix Sekarang</a>
+                <p class="alight-message">
+                    Berikan sentuhan kreatif pada video Anda dengan koleksi preset eksklusif dari para master editor Indonesia.
+                </p>
+            </div>
+            
+            <div class="features">
+                <div class="feature-item">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-title">Preset Premium</div>
+                    <div>Koleksi preset eksklusif dengan efek profesional untuk video cinematic</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🎨</div>
+                    <div class="feature-title">Template Siap Pakai</div>
+                    <div>Template intro, outro, dan transisi yang bisa langsung digunakan</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🔍</div>
+                    <div class="feature-title">Tutorial Mendalam</div>
+                    <div>Panduan langkah demi langkah dan tips dari editor profesional</div>
+                </div>
             </div>
             
             <div class="faq">
                 <h2>Pertanyaan Umum</h2>
                 
                 <div class="faq-item">
-                    <div class="faq-question">Mengapa NusaView dihentikan?</div>
+                    <div class="faq-question">Mengapa NusaView berubah menjadi platform preset Alight Motion?</div>
                     <div class="faq-answer">
-                        Keputusan ini diambil setelah evaluasi menyeluruh terhadap perubahan pasar streaming, meningkatnya biaya lisensi konten, dan tantangan persaingan yang semakin ketat. Strategi perusahaan kami sekarang akan berfokus pada layanan hiburan audio melalui kemitraan dengan Astronix.
+                        Kami melihat peluang besar dalam industri editing video mobile dan banyaknya permintaan kreator Indonesia akan preset berkualitas. Transformasi ini adalah langkah strategis untuk memberikan nilai lebih kepada komunitas kreatif Indonesia.
                     </div>
                 </div>
                 
                 <div class="faq-item">
-                    <div class="faq-question">Bagaimana dengan langganan aktif saya?</div>
+                    <div class="faq-question">Apakah layanan ini berbayar?</div>
                     <div class="faq-answer">
-                        Semua langganan aktif telah dihentikan secara otomatis dan Anda tidak akan dikenakan biaya lebih lanjut. Pembayaran pro-rata untuk sisa masa langganan Anda akan dikembalikan dalam 7-14 hari kerja.
+                        Kami akan menyediakan preset dasar gratis dan preset premium berbayar. Pelanggan lama NusaView akan mendapatkan akses eksklusif ke beberapa preset premium secara gratis sebagai bentuk terima kasih atas kesetiaan Anda.
                     </div>
                 </div>
                 
                 <div class="faq-item">
-                    <div class="faq-question">Apakah saya bisa mengakses daftar tontonan atau riwayat saya?</div>
+                    <div class="faq-question">Bagaimana cara menggunakan preset Alight Motion?</div>
                     <div class="faq-answer">
-                        Sayang sekali, semua data pengguna termasuk daftar tontonan dan riwayat tidak lagi tersedia. Kami telah menghapus semua data sesuai dengan kebijakan privasi kami.
+                        Setelah mengunduh preset dari platform kami, Anda cukup mengimpornya ke aplikasi Alight Motion Anda. Kami akan menyediakan tutorial detail untuk setiap preset agar Anda dapat memaksimalkan penggunaannya.
                     </div>
                 </div>
                 
                 <div class="faq-item">
-                    <div class="faq-question">Apa itu Astronix?</div>
+                    <div class="faq-question">Apakah akun NusaView saya masih bisa digunakan?</div>
                     <div class="faq-answer">
-                        Astronix adalah layanan streaming musik premium yang menawarkan jutaan lagu, podcast, dan konten audio eksklusif dengan kualitas suara terbaik. Platform ini dirancang untuk memberikan pengalaman mendengarkan yang imersif dan personal.
+                        Ya, semua akun NusaView akan otomatis ditransfer ke platform baru. Anda dapat menggunakan email dan kata sandi yang sama untuk masuk ke layanan baru kami.
                     </div>
                 </div>
             </div>
             
             <div style="margin-top: 40px;">
-                <a href="https://astronixid.vercel.app" class="btn btn-astronix">Gabung Astronix Sekarang</a>
-                <a href="mailto:brianganteng031@gmail.com" class="btn btn-secondary">Hubungi Dukungan</a>
+                <a href="#daftar-sekarang" class="btn btn-alight">Daftar Sekarang</a>
+                <a href="#pelajari-lebih-lanjut" class="btn btn-secondary">Pelajari Lebih Lanjut</a>
             </div>
         </div>
     </main>
@@ -251,5 +315,28 @@
             &copy; 2025 NusaView Media Group. Hak Cipta Dilindungi.
         </div>
     </footer>
+
+    <script>
+        // Countdown timer
+        function updateCountdown() {
+            const targetDate = new Date('April 23, 2025 00:00:00').getTime();
+            const now = new Date().getTime();
+            const timeLeft = targetDate - now;
+            
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+            
+            document.getElementById('countdown').innerHTML = `${days} Hari ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeLeft < 0) {
+                document.getElementById('countdown').innerHTML = "Transformasi telah dimulai!";
+            }
+        }
+        
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    </script>
 </body>
 </html>
